@@ -1,0 +1,9 @@
+# Copiar a terraform.tfvars (ignorado por git). En CI estos valores llegan como TF_VAR_* desde
+# variables del repositorio (ninguno es secreto: la clave SSH es la pública).
+subscription_id   = "00000000-0000-0000-0000-000000000000"
+location          = "northcentralus"
+dns_label         = "notifier-equipo-xx"
+ssh_public_key    = "ssh-ed25519 AAAA... usuario@equipo"
+admin_cidr        = "203.0.113.10/32"
+alert_emails      = ["correo@example.com"]
+budget_start_date = "2026-11-01T00:00:00Z"

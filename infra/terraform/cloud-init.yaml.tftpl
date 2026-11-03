@@ -1,0 +1,10 @@
+#cloud-config
+package_update: true
+packages:
+  - curl
+  - ca-certificates
+runcmd:
+  # --secrets-encryption: cifra los Secrets en el almacén de K3s (no solo base64).
+  # --tls-san: el certificado de la API incluye el nombre DNS público.
+  # La API (6443) queda cerrada por el NSG; se administra por SSH o az vm run-command.
+  - [sh, -c, "curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION='${k3s_version}' sh -s - server --secrets-encryption --tls-san ${fqdn}"]
