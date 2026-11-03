@@ -1,0 +1,19 @@
+# Entorno local: solo dependencias. API y worker se ejecutan con el venv (ver README).
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: notifier
+      POSTGRES_PASSWORD: notifier
+      POSTGRES_DB: notifier
+    ports: ["5432:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U notifier"]
+      interval: 3s
+      retries: 20
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "1025:1025"   # SMTP
+      - "8025:8025"   # interfaz web con los correos recibidos

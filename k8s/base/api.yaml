@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+spec:
+  selector: {app: api}
+  ports:
+    - {name: http, port: 80, targetPort: http}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: api}
+  template:
+    metadata:
+      labels: {app: api}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: /metrics
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile: {type: RuntimeDefault}
+      initContainers:
+        # Migraciones antes de arrancar; seguro con varias réplicas (advisory lock).
+        - name: migrate
+          image: notifier
+          command: [python, -m, notifier.migrate]
+          envFrom: [{configMapRef: {name: notifier-config}}]
+          env: &db-env
+            - name: NOTIFIER_DATABASE_URL
+              valueFrom:
+                secretKeyRef: {name: notifier-secrets, key: database-url}
+          securityContext: &container-security
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+      containers:
+        - name: api
+          image: notifier
+          ports:
+            - {name: http, containerPort: 8000}
+          envFrom: [{configMapRef: {name: notifier-config}}]
+          env: *db-env
+          securityContext: *container-security
+          # readiness: sin base de datos no recibe tráfico. liveness: solo el proceso.
+          readinessProbe:
+            httpGet: {path: /readyz, port: http}
+            periodSeconds: 5
+            failureThreshold: 2
+          livenessProbe:
+            httpGet: {path: /healthz, port: http}
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            requests: {cpu: 50m, memory: 96Mi}
+            limits: {memory: 256Mi}

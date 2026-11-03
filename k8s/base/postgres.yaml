@@ -1,0 +1,59 @@
+# PostgreSQL dentro del clúster, con volumen persistente (los datos sobreviven al reinicio del Pod).
+# Secret requerido (NO versionado): notifier-secrets con las claves
+#   postgres-password   y   database-url  (postgresql://notifier:<pass>@postgres:5432/notifier)
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+spec:
+  clusterIP: None
+  selector: {app: postgres}
+  ports:
+    - {name: pg, port: 5432}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+spec:
+  serviceName: postgres
+  replicas: 1
+  selector:
+    matchLabels: {app: postgres}
+  template:
+    metadata:
+      labels: {app: postgres}
+    spec:
+      securityContext:
+        fsGroup: 999
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          ports:
+            - {name: pg, containerPort: 5432}
+          env:
+            - {name: POSTGRES_USER, value: notifier}
+            - {name: POSTGRES_DB, value: notifier}
+            - {name: PGDATA, value: /var/lib/postgresql/data/pgdata}
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef: {name: notifier-secrets, key: postgres-password}
+          readinessProbe:
+            exec: {command: [pg_isready, -U, notifier]}
+            periodSeconds: 5
+          livenessProbe:
+            exec: {command: [pg_isready, -U, notifier]}
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          resources:
+            requests: {cpu: 100m, memory: 256Mi}
+            limits: {memory: 512Mi}
+          volumeMounts:
+            - {name: data, mountPath: /var/lib/postgresql/data}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ReadWriteOnce]
+        resources:
+          requests: {storage: 5Gi}

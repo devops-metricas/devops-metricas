@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: worker}
+  template:
+    metadata:
+      labels: {app: worker}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9100"
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile: {type: RuntimeDefault}
+      # Margen para terminar el intento en curso al recibir SIGTERM.
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: worker
+          image: notifier
+          command: [python, -m, notifier.worker.main]
+          ports:
+            - {name: metrics, containerPort: 9100}
+          envFrom: [{configMapRef: {name: notifier-config}}]
+          env:
+            - name: NOTIFIER_DATABASE_URL
+              valueFrom:
+                secretKeyRef: {name: notifier-secrets, key: database-url}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          # El worker no recibe tráfico: solo hay liveness (el servidor de métricas responde).
+          livenessProbe:
+            httpGet: {path: /metrics, port: metrics}
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            failureThreshold: 3
+          resources:
+            requests: {cpu: 50m, memory: 96Mi}
+            limits: {memory: 256Mi}

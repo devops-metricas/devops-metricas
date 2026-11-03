@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# El namespace lo fija cada overlay (notifier-dev / notifier-prod).
+resources:
+  - postgres.yaml
+  - mailpit.yaml
+  - api.yaml
+  - worker.yaml
+
+configMapGenerator:
+  - name: notifier-config
+    literals:
+      - NOTIFIER_SMTP_HOST=mailpit
+      - NOTIFIER_SMTP_PORT=1025
+      - NOTIFIER_MAX_ATTEMPTS=3
+      - NOTIFIER_RETRY_BACKOFF_SECONDS=5
+      - NOTIFIER_EMAIL_FAULT_RATE=0
+      - NOTIFIER_EMAIL_FAULT_KIND=503
+
+# La imagen se fija en los overlays (nombre y etiqueta = sha del commit).
+images:
+  - name: notifier
+    newName: ghcr.io/REPLACE_OWNER/notifier
+    newTag: latest
