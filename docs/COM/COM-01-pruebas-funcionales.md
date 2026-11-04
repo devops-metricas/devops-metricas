@@ -14,4 +14,4 @@ Hay 23 pruebas en `tests/` y `scripts/smoke.py` (ver README). Falta ejecutarlas 
 
 ## Evidencia
 
-Pendiente de enlazar. Guardar las capturas en [evidencias/](evidencias/) con el prefijo `COM-01-`.
+Pendiente de enlazar. Guardar las capturas en [evidencias/](../evidencias) con el prefijo `COM-01-`.

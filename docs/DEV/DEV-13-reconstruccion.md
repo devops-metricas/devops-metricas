@@ -96,8 +96,8 @@ done
 
 Hecho:
 
-- `plan` revisado: [DEV-06-plan.png](evidencias/DEV-06-plan.png).
-- `apply` aprobado: [DEV-06-apply.png](evidencias/DEV-06-apply.png).
+- `plan` revisado: [DEV-06-plan.png](../evidencias/DEV-06-plan.png).
+- `apply` aprobado: [DEV-06-apply.png](../evidencias/DEV-06-apply.png).
 
 Pendiente:
 

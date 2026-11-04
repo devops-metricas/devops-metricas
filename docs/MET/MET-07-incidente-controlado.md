@@ -14,4 +14,4 @@ Degradación inducida (`NOTIFIER_EMAIL_FAULT_RATE`) y su análisis con línea de
 
 ## Evidencia
 
-Pendiente de enlazar. Guardar las capturas en [evidencias/](evidencias/) con el prefijo `MET-07-`.
+Pendiente de enlazar. Guardar las capturas en [evidencias/](../evidencias) con el prefijo `MET-07-`.

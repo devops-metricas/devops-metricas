@@ -14,4 +14,4 @@ Dos reglas de alerta, una demostrada al activarse y recuperarse.
 
 ## Evidencia
 
-Pendiente de enlazar. Guardar las capturas en [evidencias/](evidencias/) con el prefijo `MET-06-`.
+Pendiente de enlazar. Guardar las capturas en [evidencias/](../evidencias) con el prefijo `MET-06-`.

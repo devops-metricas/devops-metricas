@@ -14,4 +14,4 @@ Despliegue a dev, promoción a prod con aprobación y demostración.
 
 ## Evidencia
 
-Pendiente de enlazar. Guardar las capturas en [evidencias/](evidencias/) con el prefijo `DEV-05-`.
+Pendiente de enlazar. Guardar las capturas en [evidencias/](../evidencias) con el prefijo `DEV-05-`.

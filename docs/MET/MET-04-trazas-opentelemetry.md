@@ -14,4 +14,4 @@ Hay instrumentación y propagación en el código. Falta el colector, el backend
 
 ## Evidencia
 
-Pendiente de enlazar. Guardar las capturas en [evidencias/](evidencias/) con el prefijo `MET-04-`.
+Pendiente de enlazar. Guardar las capturas en [evidencias/](../evidencias) con el prefijo `MET-04-`.

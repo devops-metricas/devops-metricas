@@ -14,4 +14,4 @@ Demostración de recuperación de una versión defectuosa y verificación poster
 
 ## Evidencia
 
-Pendiente de enlazar. Guardar las capturas en [evidencias/](evidencias/) con el prefijo `DEV-12-`.
+Pendiente de enlazar. Guardar las capturas en [evidencias/](../evidencias) con el prefijo `DEV-12-`.

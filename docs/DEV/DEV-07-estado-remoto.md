@@ -14,4 +14,4 @@ Backend en Azure sin llaves, con versionado, creado por `infra/bootstrap/bootstr
 
 ## Evidencia
 
-Pendiente de enlazar. Guardar las capturas en [evidencias/](evidencias/) con el prefijo `DEV-07-`.
+Pendiente de enlazar. Guardar las capturas en [evidencias/](../evidencias) con el prefijo `DEV-07-`.

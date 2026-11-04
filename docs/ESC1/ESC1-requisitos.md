@@ -28,4 +28,4 @@
 ## Qué falta
 
 Ejecutar los comandos contra el ambiente `dev` en el clúster y guardar la salida en
-[evidencias/](evidencias/) con el prefijo `ESC1-`. Depende de que la aplicación esté desplegada (Diego).
+[evidencias/](../evidencias) con el prefijo `ESC1-`. Depende de que la aplicación esté desplegada (Diego).

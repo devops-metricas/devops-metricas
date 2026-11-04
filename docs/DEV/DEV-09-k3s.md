@@ -14,4 +14,4 @@ K3s se instala por cloud-init; nodo `Ready` verificado por SSH. Falta guardar la
 
 ## Evidencia
 
-Pendiente de enlazar. Guardar las capturas en [evidencias/](evidencias/) con el prefijo `DEV-09-`.
+Pendiente de enlazar. Guardar las capturas en [evidencias/](../evidencias) con el prefijo `DEV-09-`.

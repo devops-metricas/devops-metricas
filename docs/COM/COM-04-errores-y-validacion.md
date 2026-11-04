@@ -14,4 +14,4 @@ Pruebas negativas y de recuperación en `tests/` y comandos `email-failure`, `em
 
 ## Evidencia
 
-Pendiente de enlazar. Guardar las capturas en [evidencias/](evidencias/) con el prefijo `COM-04-`.
+Pendiente de enlazar. Guardar las capturas en [evidencias/](../evidencias) con el prefijo `COM-04-`.

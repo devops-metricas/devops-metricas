@@ -23,7 +23,7 @@ variable "dns_label" {
 variable "vm_size" {
   type        = string
   default     = "Standard_B2as_v2" # 2 vCPU / 8 GiB (AMD): disponible en northcentralus, sin restricciones
-  description = "Tamaño de la VM; se justifica con los requests reales (docs/DEV-14-costos.md)."
+  description = "Tamaño de la VM; se justifica con los requests reales (docs/DEV/DEV-14-costos.md)."
 }
 
 variable "admin_username" {

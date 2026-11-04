@@ -14,4 +14,4 @@ Dashboard en Grafana con seis o más paneles.
 
 ## Evidencia
 
-Pendiente de enlazar. Guardar las capturas en [evidencias/](evidencias/) con el prefijo `MET-05-`.
+Pendiente de enlazar. Guardar las capturas en [evidencias/](../evidencias) con el prefijo `MET-05-`.

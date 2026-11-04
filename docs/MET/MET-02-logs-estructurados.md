@@ -14,4 +14,4 @@ Los logs ya son estructurados en el código (`structlog`). Falta documentar la c
 
 ## Evidencia
 
-Pendiente de enlazar. Guardar las capturas en [evidencias/](evidencias/) con el prefijo `MET-02-`.
+Pendiente de enlazar. Guardar las capturas en [evidencias/](../evidencias) con el prefijo `MET-02-`.

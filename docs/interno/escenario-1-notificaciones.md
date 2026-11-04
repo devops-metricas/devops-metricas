@@ -86,8 +86,8 @@ El objetivo es responder con datos, no con opiniones: cuántas solicitudes acept
 ### Documentos en el repo
 
 - `docs/EVIDENCIAS.md`: por cada requisito, un enlace que lo pruebe.
-- `docs/COM-06-decisiones.md`: qué elegimos y por qué.
-- `docs/COM-02-arquitectura.md`, `docs/metricas/catalogo.md`, `docs/DEV-13-reconstruccion.md` y `docs/DEV-14-costos.md`.
+- `docs/COM/COM-06-decisiones.md`: qué elegimos y por qué.
+- `docs/COM/COM-02-arquitectura.md`, `docs/MET/MET-01-catalogo-de-indicadores.md`, `docs/DEV/DEV-13-reconstruccion.md` y `docs/DEV/DEV-14-costos.md`.
 
 ### Defensa individual
 

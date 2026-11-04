@@ -14,4 +14,4 @@ Catálogo con definición, unidad, fuente, forma de cálculo y propósito. `obse
 
 ## Evidencia
 
-Pendiente de enlazar. Guardar las capturas en [evidencias/](evidencias/) con el prefijo `MET-01-`.
+Pendiente de enlazar. Guardar las capturas en [evidencias/](../evidencias) con el prefijo `MET-01-`.

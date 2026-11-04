@@ -14,4 +14,4 @@ ConfigMaps y Secrets fuera de la imagen; permisos mínimos de los pipelines. Los
 
 ## Evidencia
 
-Pendiente de enlazar. Guardar las capturas en [evidencias/](evidencias/) con el prefijo `DEV-10-`.
+Pendiente de enlazar. Guardar las capturas en [evidencias/](../evidencias) con el prefijo `DEV-10-`.

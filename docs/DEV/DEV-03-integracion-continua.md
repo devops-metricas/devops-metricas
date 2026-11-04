@@ -14,4 +14,4 @@ Workflow de CI (lint y pruebas) y protección de rama que bloquee la integració
 
 ## Evidencia
 
-Pendiente de enlazar. Guardar las capturas en [evidencias/](evidencias/) con el prefijo `DEV-03-`.
+Pendiente de enlazar. Guardar las capturas en [evidencias/](../evidencias) con el prefijo `DEV-03-`.

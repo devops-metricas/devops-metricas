@@ -14,4 +14,4 @@ Requiere la aplicación desplegada en el clúster (depende de Diego: DEV-04 y DE
 
 ## Evidencia
 
-Pendiente de enlazar. Guardar las capturas en [evidencias/](evidencias/) con el prefijo `COM-03-`.
+Pendiente de enlazar. Guardar las capturas en [evidencias/](../evidencias) con el prefijo `COM-03-`.

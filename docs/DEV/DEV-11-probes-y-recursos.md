@@ -14,4 +14,4 @@ La API ya define probes, requests y límites en `k8s/base/api.yaml`. Falta justi
 
 ## Evidencia
 
-Pendiente de enlazar. Guardar las capturas en [evidencias/](evidencias/) con el prefijo `DEV-11-`.
+Pendiente de enlazar. Guardar las capturas en [evidencias/](../evidencias) con el prefijo `DEV-11-`.

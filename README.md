@@ -13,10 +13,10 @@ mismo prefijo. Lo que es solo del equipo (reparto, enunciado, guía del escenari
 | Requisito | Documento |
 |---|---|
 | Todos | [Índice con responsable y estado de cada requisito](docs/EVIDENCIAS.md) |
-| COM-01 a COM-06 | `docs/COM-0X-*.md` |
-| DEV-01 a DEV-14 | `docs/DEV-XX-*.md` |
-| MET-01 a MET-07 | `docs/MET-0X-*.md` |
-| ESC1-01 a ESC1-10 | [ESC1-requisitos.md](docs/ESC1-requisitos.md) |
+| COM-01 a COM-06 | [docs/COM/](docs/COM/) |
+| DEV-01 a DEV-14 | [docs/DEV/](docs/DEV/) |
+| MET-01 a MET-07 | [docs/MET/](docs/MET/) |
+| ESC1-01 a ESC1-10 | [docs/ESC1/](docs/ESC1/) |
 
 ## Arquitectura
 
@@ -30,7 +30,7 @@ cliente ──HTTPS──▶ API (FastAPI) ──┐
 ```
 
 Una sola imagen (`Dockerfile`) sirve para API, worker y migraciones; cambia el comando.
-Detalle en [docs/COM-02-arquitectura.md](docs/COM-02-arquitectura.md).
+Detalle en [docs/COM/COM-02-arquitectura.md](docs/COM/COM-02-arquitectura.md).
 
 ## Desarrollo local
 
@@ -121,5 +121,5 @@ k8s/            manifiestos (kustomize): base + overlays dev y prod
 infra/          Terraform (Azure + K3s) y bootstrap inicial
 .github/        CI, Terraform, entrega y rollback
 scripts/        pruebas reproducibles (lote, idempotencia)
-docs/           un documento por requisito (COM-02, COM-06, DEV-13, DEV-14), evidencias/ e interno/
+docs/           COM/, DEV/, MET/ y ESC1/ (un documento por requisito), evidencias/ e interno/; índice en EVIDENCIAS.md
 ```

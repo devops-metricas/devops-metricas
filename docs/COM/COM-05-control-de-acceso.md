@@ -14,4 +14,4 @@ Clave por cliente con rol `admin`; pruebas en `tests/` y comando `access` de `sc
 
 ## Evidencia
 
-Pendiente de enlazar. Guardar las capturas en [evidencias/](evidencias/) con el prefijo `COM-05-`.
+Pendiente de enlazar. Guardar las capturas en [evidencias/](../evidencias) con el prefijo `COM-05-`.

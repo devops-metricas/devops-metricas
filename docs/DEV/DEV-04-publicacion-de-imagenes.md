@@ -14,4 +14,4 @@ Construcción y publicación automática; vínculo commit, workflow e imagen des
 
 ## Evidencia
 
-Pendiente de enlazar. Guardar las capturas en [evidencias/](evidencias/) con el prefijo `DEV-04-`.
+Pendiente de enlazar. Guardar las capturas en [evidencias/](../evidencias) con el prefijo `DEV-04-`.
