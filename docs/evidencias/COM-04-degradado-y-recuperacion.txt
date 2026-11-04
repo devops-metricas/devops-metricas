@@ -1,0 +1,16 @@
+# 2026-11-04  scripts/smoke.py email-degraded   (worker con NOTIFIER_EMAIL_FAULT_RATE=1.0; API local)
+OK    se aceptan aunque el correo falle
+OK    el canal interno entrega todo
+OK    los correos llegan a un estado final
+OK    hubo reintentos (más de un intento)
+OK    ninguno supera 3 intentos
+OK    49628525: failed tras agotar los 3 intentos
+OK    49628525: todos sus intentos fueron errores pasajeros
+(igual para los otros 9 correos: 04475494, ddd3e5f7, a3eb0a4e, 36b3c5b2, cb55801c, 59764c1e, acf40270, 37a08e6b, 570e3eba)
+
+# 2026-11-04  scripts/smoke.py recovery   (worker detenido; RESTART_CMD lo arranca de nuevo)
+trabajos sin terminar al reiniciar: 60
+OK    hay trabajos pendientes al momento del reinicio
+OK    worker reiniciado
+OK    las 60 notificaciones siguen consultables
+OK    todas se entregan tras el reinicio
