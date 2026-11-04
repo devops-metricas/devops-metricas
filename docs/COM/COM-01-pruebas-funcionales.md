@@ -10,8 +10,10 @@
 
 ## Qué hay y qué falta
 
-Hay 23 pruebas en `tests/` y `scripts/smoke.py` (ver README). Falta ejecutarlas contra el clúster y guardar la salida.
+Hay 23 pruebas en `tests/` y `scripts/smoke.py` (ver README). Pasan en local con PostgreSQL y Mailpit.
+Falta ejecutar `smoke.py` contra el clúster, que depende de que la app esté desplegada (Diego).
 
 ## Evidencia
 
-Pendiente de enlazar. Guardar las capturas en [evidencias/](../evidencias) con el prefijo `COM-01-`.
+[COM-01-pytest.txt](../evidencias/COM-01-pytest.txt): 23 pruebas pasan y el lote de 100 solicitudes
+termina en `delivered`. Más pruebas del escenario en [ESC1-smoke-local.txt](../evidencias/ESC1-smoke-local.txt).

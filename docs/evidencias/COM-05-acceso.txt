@@ -1,0 +1,8 @@
+# 2026-11-04  scripts/smoke.py access   (API y worker locales)
+OK    sin clave: 401
+OK    clave inválida: 401
+OK    cliente sin rol admin no puede reprocesar (403)
+OK    cliente sin rol admin no ve stats (403)
+OK    admin sí ve stats (200)
+
+# pytest: test_unauthorized_client_is_rejected, test_clients_cannot_read_each_others_notifications (PASSED)

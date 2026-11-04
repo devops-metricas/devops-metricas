@@ -10,8 +10,10 @@
 
 ## Qué hay y qué falta
 
-Clave por cliente con rol `admin`; pruebas en `tests/` y comando `access` de `scripts/smoke.py`. Falta guardar la salida de una ejecución.
+Clave por cliente con rol `admin`; pruebas en `tests/` y comando `access` de `scripts/smoke.py`.
+Probado en local. Falta ejecutarlo contra el clúster.
 
 ## Evidencia
 
-Pendiente de enlazar. Guardar las capturas en [evidencias/](../evidencias) con el prefijo `COM-05-`.
+[COM-05-acceso.txt](../evidencias/COM-05-acceso.txt): sin clave y clave inválida (401), cliente sin
+rol admin (403) y admin autorizado (200).

@@ -1,0 +1,17 @@
+# 2026-11-04  scripts/smoke.py   (API y worker locales, PostgreSQL y Mailpit con docker compose)
+
+## P1-1 batch
+OK    100 solicitudes aceptadas (202)
+OK    100 identificadores distintos
+OK    todas llegan a un estado final consultable
+estados: {'delivered': 100}
+
+## P1-3 idempotency
+OK    secuencial: 5 respuestas, una notificación
+OK    secuencial: 202 y luego 200
+OK    concurrente: 5 respuestas, una notificación
+OK    concurrente: exactamente un 202
+OK    misma clave con contenido distinto se rechaza (409)
+
+## ESC1-10 stats (GET /v1/stats, rol admin)
+{"email":{"total":54,"by_status":{"delivered":{"count":51,"rate":0.9444},"failed":{"count":3,"rate":0.0556}}},"internal":{"total":55,"by_status":{"delivered":{"count":55,"rate":1.0}}}}
