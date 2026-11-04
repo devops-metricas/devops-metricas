@@ -4,6 +4,7 @@ namespace: notifier-dev
 resources:
   - ../../base
   - namespace.yaml
+  - ingress.yaml
 configMapGenerator:
   - name: notifier-config
     behavior: merge

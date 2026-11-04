@@ -110,10 +110,26 @@ mínimos:
 - `terraform.yml`: `plan` en cada PR; `apply` al unir a `main`, con aprobación del entorno `infra`.
 - `infra-ops.yml`: apagar, encender, aplicar y destruir a demanda.
 
+### Acceso público y TLS
+
+- **DNS:** la IP pública es estática y tiene una etiqueta DNS fija en Azure
+  (`<TF_DNS_LABEL>.northcentralus.cloudapp.azure.com`), definida en Terraform. El nombre no cambia al
+  reconstruir la VM, por eso el certificado y las URL sobreviven a un `destroy`/`apply`.
+- **Enrutamiento:** Traefik (incluido en K3s) recibe 80/443 y reparte por ruta bajo el mismo nombre:
+  `/dev` → `notifier-dev` y `/prod` → `notifier-prod`. Un Middleware `StripPrefix` quita el prefijo,
+  así la API sigue sirviendo `/v1/...`. Manifiestos en `k8s/overlays/*/ingress.yaml`.
+- **Certificado:** emitido por Let's Encrypt con el resolver ACME de Traefik (desafío HTTP-01 por el
+  puerto 80), configurado en `k8s/platform/traefik-acme.yaml`. Se renueva solo y se guarda en un
+  volumen persistente (`/data/acme.json`), así que sobrevive a reinicios de Traefik. HTTP redirige a
+  HTTPS (308).
+- **Por qué rutas y no subdominios:** Azure da un solo nombre por IP; un dominio propio o `sslip.io`
+  (depende de la IP) añadirían costo o romperían la reconstrucción (ver
+  [COM-06-decisiones.md](COM-06-decisiones.md)).
+- **Verificación:** certificado válido (emisor Let's Encrypt, `curl` sin `-k`), probado con un
+  backend de prueba.
+
 ## Estado actual y pendientes
 
-- El tráfico externo entra por 80/443 hacia Traefik (incluido en K3s), pero **aún no hay manifiestos de
-  Ingress ni TLS** en `k8s/`. Mientras tanto la API se prueba por SSH o con `kubectl port-forward`.
 - Los workflows de CI, publicación de imagen y entrega a dev/prod, y los Secrets de Kubernetes
   (`notifier-secrets`) los define el área de CI/CD.
 - Un solo nodo y una réplica por componente: no hay alta disponibilidad. Es una decisión consciente
