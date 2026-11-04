@@ -53,7 +53,7 @@ Cada decisión indica qué se eligió, por qué y qué se acepta a cambio.
 - **Elegido:** `Standard_B2as_v2` (2 vCPU, 8 GB) en `northcentralus`.
 - **Por qué:** la suscripción solo permite cinco regiones y el tamaño disponible sin restricciones
   allí es este. 8 GB alcanzan para dos ambientes y el stack de métricas.
-- **Se confirma con:** los requests reales medidos ([DEV-14-costos.md](DEV-14-costos.md)).
+- **Se confirma con:** los requests reales medidos ([DEV-14-costos.md](../DEV/DEV-14-costos.md)).
 
 ## 8. Sin llaves ni contraseñas: OIDC y mínimo privilegio
 
@@ -86,7 +86,7 @@ Cada decisión indica qué se eligió, por qué y qué se acepta a cambio.
 - **Elegido:** solo el bootstrap (una vez) y la configuración de GitHub. Todo lo demás es código y
   pipeline, incluida la destrucción y la reconstrucción.
 - **Por qué:** el bootstrap crea las identidades y el almacenamiento que el pipeline necesita para
-  existir; no puede crearlos él mismo. Es idempotente y está en [DEV-13-reconstruccion.md](DEV-13-reconstruccion.md).
+  existir; no puede crearlos él mismo. Es idempotente y está en [DEV-13-reconstruccion.md](../DEV/DEV-13-reconstruccion.md).
 
 ## 12. Cifrado de Secrets en K3s
 
