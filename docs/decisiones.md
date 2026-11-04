@@ -93,3 +93,20 @@ Cada decisión indica qué se eligió, por qué y qué se acepta a cambio.
 - **Elegido:** `--secrets-encryption` al instalar K3s.
 - **Por qué:** los Secrets de Kubernetes son base64, no cifrado; así quedan cifrados en el almacén.
 - **Se acepta:** protege el almacén en disco, no a quien tenga acceso de administrador al clúster.
+
+## Alternativas descartadas
+
+| Tema | Alternativa | Por qué no |
+|---|---|---|
+| Cola | Redis, RabbitMQ o Azure Service Bus | Otra pieza que operar, vigilar y pagar; la cola en PostgreSQL ya da transaccionalidad con el estado y basta para el volumen del proyecto. Cambiarla queda aislado en `repository.py` y el worker |
+| Base de datos | Azure Database for PostgreSQL | Costo fijo mensual que consume una parte relevante de los US$100. Se despliega PostgreSQL en el clúster con un volumen persistente |
+| Orquestación | AKS (Kubernetes administrado) | El enunciado exige K3s en VM de Azure; AKS además cobra los nodos y el plano de control |
+| Orquestación | Dos nodos o dos VM (una por ambiente) | Duplica el costo de cómputo; el enunciado admite namespaces y no exige alta disponibilidad |
+| Reintentos | Reintento inmediato, sin espera | Aumenta la carga sobre un proveedor que ya falla. Se usa espera exponencial (5 s, 10 s) |
+| Idempotencia | Caché o ventana de 24 h con limpieza | Más piezas y un caso límite al expirar. El índice único es atómico y también cubre la repetición concurrente |
+| Autenticación | JWT o OAuth2 | El enunciado solo pide identificar a la aplicación y rechazar a las no autorizadas; una clave por cliente lo resuelve con menos superficie |
+| Autenticación de Azure | Service principal con secreto de cliente | Hay que guardarlo y rotarlo. Con OIDC no existe secreto que filtrar |
+| Estado de Terraform | Local, o llave de la cuenta de almacenamiento | El estado local se pierde con la laptop. La llave de la cuenta da acceso total; se usa Entra ID con rol acotado |
+| Exposición del clúster | Abrir 6443 con una lista de IP | El enunciado pide no exponer la API de Kubernetes. Se administra por SSH, restringido a una IP |
+| Costos | Automatizar el apagado desde la alerta de presupuesto | Las alertas solo notifican. Se usa apagado programado (23:00) más apagado manual |
+| Imagen | Una imagen por componente | Tres imágenes que mantener y publicar para el mismo código. Una sola, con comando distinto, se construye una vez y se promueve |

@@ -66,6 +66,34 @@ Regla del destinatario `…@invalid.test`: el proveedor simulado lo rechaza de f
 `NOTIFIER_EMAIL_FAULT_RATE=0.7` (y `NOTIFIER_EMAIL_FAULT_KIND=503|timeout`) en el worker hace que
 el 70 % de los envíos por correo fallen de forma pasajera; el canal interno no se afecta.
 
+### Pruebas reproducibles contra un ambiente en ejecución
+
+`scripts/smoke.py` crea datos ficticios, comprueba el resultado y termina con código distinto de cero
+si algo falla. Funciona igual en local, dev o prod:
+
+```bash
+export API_URL=http://localhost:8000 API_KEY=ntf_... ADMIN_KEY=ntf_...   # claves de create-client
+python scripts/smoke.py access          # ESC1-02: sin clave, clave inválida y rol insuficiente
+python scripts/smoke.py batch           # P1-1: 100 solicitudes entre ambos canales
+python scripts/smoke.py idempotency     # P1-3: 5 repeticiones, secuenciales y concurrentes
+python scripts/smoke.py email-failure   # error permanente: failed sin reintentos
+```
+
+Con el worker en modo degradado (`NOTIFIER_EMAIL_FAULT_RATE=1.0`):
+
+```bash
+python scripts/smoke.py email-degraded  # P1-2: se aceptan, reintenta hasta 3 veces; el canal interno sigue
+```
+
+Reinicio del worker con trabajos pendientes (P1-4); `RESTART_CMD` reinicia el worker del ambiente:
+
+```bash
+# En el clúster
+RESTART_CMD="kubectl -n notifier-dev rollout restart deploy/worker" python scripts/smoke.py recovery
+# En local: con el worker detenido, el comando solo lo arranca (los trabajos quedan pendientes)
+RESTART_CMD="python -m notifier.worker.main &" python scripts/smoke.py recovery
+```
+
 ## Pruebas y calidad
 
 ```bash
