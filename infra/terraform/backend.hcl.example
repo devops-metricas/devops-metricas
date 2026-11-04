@@ -1,7 +1,7 @@
 # Copiar a backend.hcl (ignorado por git) con los valores que imprime infra/bootstrap/bootstrap.sh
+# La autenticación (az login en local, ARM_USE_OIDC=true en CI) se decide por entorno.
 resource_group_name  = "rg-notifier-tfstate"
 storage_account_name = "stnotifXXXXXXXXXX"
 container_name       = "tfstate"
 key                  = "notifier.tfstate"
-use_oidc             = true
 use_azuread_auth     = true # sin llaves de la cuenta: solo identidad de Entra ID

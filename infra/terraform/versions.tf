@@ -16,5 +16,6 @@ terraform {
 provider "azurerm" {
   features {}
   subscription_id = var.subscription_id
-  use_oidc        = true # en CI; localmente `az login` sirve para `plan`
+  # Autenticación por entorno: en CI el workflow define ARM_USE_OIDC=true (GitHub OIDC);
+  # en local se usa la sesión de `az login`. No se fija aquí para que ambos funcionen.
 }

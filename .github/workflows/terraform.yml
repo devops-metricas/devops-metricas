@@ -1,0 +1,104 @@
+name: Terraform
+
+# PR            -> validate + plan (identidad de SOLO LECTURA). Nunca aplica.
+# push a main   -> validate + plan + apply, y el apply espera la aprobación del entorno "infra".
+# Los logs de este repo son públicos: las variables con datos personales son `sensitive`.
+
+on:
+  pull_request:
+    paths: ["infra/terraform/**", ".github/workflows/terraform.yml"]
+  push:
+    branches: [main]
+    paths: ["infra/terraform/**", ".github/workflows/terraform.yml"]
+
+permissions:
+  contents: read
+  id-token: write # OIDC hacia Azure: sin contraseñas guardadas
+
+concurrency:
+  group: terraform # un solo plan/apply a la vez; el candado del estado es la segunda barrera
+  cancel-in-progress: false
+
+env:
+  TF_IN_AUTOMATION: "true"
+  TF_INPUT: "false"
+  ARM_USE_OIDC: "true"
+  ARM_USE_AZUREAD: "true"
+  ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+  # PR -> identidad de lectura; main/apply -> identidad con Contributor.
+  ARM_CLIENT_ID: ${{ github.event_name == 'pull_request' && vars.AZURE_PLAN_CLIENT_ID || vars.AZURE_INFRA_CLIENT_ID }}
+  TF_VAR_subscription_id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+  TF_VAR_dns_label: ${{ vars.TF_DNS_LABEL }}
+  TF_VAR_ssh_public_key: ${{ vars.TF_SSH_PUBLIC_KEY }}
+  TF_VAR_admin_cidr: ${{ vars.TF_ADMIN_CIDR }}
+  TF_VAR_alert_emails: ${{ vars.TF_ALERT_EMAILS }}
+  TF_VAR_budget_start_date: ${{ vars.TF_BUDGET_START_DATE }}
+
+defaults:
+  run:
+    working-directory: infra/terraform
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform fmt -check -recursive
+      - run: terraform init -backend=false
+      - run: terraform validate
+
+  plan:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - name: Init (estado remoto)
+        run: |
+          terraform init \
+            -backend-config="resource_group_name=${{ vars.TFSTATE_RESOURCE_GROUP }}" \
+            -backend-config="storage_account_name=${{ vars.TFSTATE_STORAGE_ACCOUNT }}" \
+            -backend-config="container_name=${{ vars.TFSTATE_CONTAINER }}" \
+            -backend-config="key=notifier.tfstate" \
+            -backend-config="use_azuread_auth=true"
+      - name: Plan
+        run: |
+          terraform plan -no-color -lock-timeout=120s | tee plan.txt
+          {
+            echo '### terraform plan'
+            echo '```'
+            tail -n 200 plan.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  apply:
+    # Solo en main. El entorno "infra" exige aprobación antes de que arranque este job.
+    needs: plan
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: infra
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - name: Init (estado remoto)
+        run: |
+          terraform init \
+            -backend-config="resource_group_name=${{ vars.TFSTATE_RESOURCE_GROUP }}" \
+            -backend-config="storage_account_name=${{ vars.TFSTATE_STORAGE_ACCOUNT }}" \
+            -backend-config="container_name=${{ vars.TFSTATE_CONTAINER }}" \
+            -backend-config="key=notifier.tfstate" \
+            -backend-config="use_azuread_auth=true"
+      # No se reutiliza un archivo de plan: en un repo público el artefacto expondría valores
+      # sensibles. Se vuelve a planear y se aplica en el mismo job, sobre el mismo commit.
+      - name: Plan y apply
+        run: |
+          terraform plan -no-color -lock-timeout=120s -out=tfplan | tee plan.txt
+          terraform apply -no-color -lock-timeout=120s tfplan
+          {
+            echo '### terraform apply'
+            echo '```'
+            terraform output -no-color
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

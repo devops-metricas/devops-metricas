@@ -39,6 +39,7 @@ variable "ssh_public_key" {
 variable "admin_cidr" {
   type        = string
   description = "CIDR autorizado para SSH (p. ej. la IP pública del equipo, /32). Nunca 0.0.0.0/0."
+  sensitive   = true # los logs de Actions son públicos: no deben mostrar la IP de nadie
 
   validation {
     condition     = var.admin_cidr != "0.0.0.0/0" && var.admin_cidr != "*"
@@ -54,6 +55,7 @@ variable "k3s_version" {
 variable "alert_emails" {
   type        = list(string)
   description = "Correos que reciben las alertas de presupuesto."
+  sensitive   = true
 }
 
 variable "budget_amount" {
