@@ -12,12 +12,11 @@ mismo prefijo. Lo que es solo del equipo (reparto, enunciado, guía del escenari
 
 | Requisito | Documento |
 |---|---|
-| COM-02 | [Arquitectura](docs/COM-02-arquitectura.md) |
-| COM-06 | [Decisiones técnicas y alternativas descartadas](docs/COM-06-decisiones.md) |
-| DEV-06, DEV-07, DEV-09 | [Infraestructura](docs/COM-02-arquitectura.md#infraestructura-azure) y [evidencias](docs/evidencias/) |
-| DEV-13 | [Reconstrucción, apagado y destrucción](docs/DEV-13-reconstruccion.md) |
-| DEV-14 | [Costos](docs/DEV-14-costos.md) |
-| Evidencias de todos los requisitos | `docs/EVIDENCIAS.md` (pendiente) |
+| Todos | [Índice con responsable y estado de cada requisito](docs/EVIDENCIAS.md) |
+| COM-01 a COM-06 | `docs/COM-0X-*.md` |
+| DEV-01 a DEV-14 | `docs/DEV-XX-*.md` |
+| MET-01 a MET-07 | `docs/MET-0X-*.md` |
+| ESC1-01 a ESC1-10 | [ESC1-requisitos.md](docs/ESC1-requisitos.md) |
 
 ## Arquitectura
 
