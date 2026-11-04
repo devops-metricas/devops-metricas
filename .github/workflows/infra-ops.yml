@@ -71,6 +71,8 @@ jobs:
       run:
         working-directory: infra/terraform
     steps:
+      # El checkout va primero: working-directory (infra/terraform) no existe hasta que se clona el repo.
+      - uses: actions/checkout@v4
       - name: Confirmación de destroy
         if: inputs.action == 'destroy'
         env:
@@ -80,7 +82,6 @@ jobs:
             echo "Para destruir, escribe exactamente DESTRUIR en el campo confirm." >&2
             exit 1
           fi
-      - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
       - name: Init (estado remoto)
         run: |
