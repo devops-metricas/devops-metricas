@@ -20,8 +20,10 @@ NOTIFIER_DATABASE_URL=postgresql://notifier:notifier@localhost:5432/notifier pyt
 - `src/notifier/`: API, worker, canales, migraciones SQL. `tests/`: pruebas.
 - `k8s/`: kustomize, `base/` y `overlays/dev|prod`. `infra/`: Terraform y bootstrap.
 - `.github/workflows/`: `terraform.yml` (plan/apply) e `infra-ops.yml` (apagar, encender, destruir).
-- `docs/`: para entender el sistema, `arquitectura.md` y `decisiones.md`. El enunciado completo está en
-  `proyecto.md`; léelo por secciones solo cuando haga falta (es largo).
+- `docs/`: un documento por requisito, con su ID al inicio del nombre (`COM-02-arquitectura.md`,
+  `COM-06-decisiones.md`, `DEV-13-reconstruccion.md`, `DEV-14-costos.md`). Capturas en `docs/evidencias/`
+  con el mismo prefijo. Lo interno del equipo va en `docs/interno/`: el enunciado completo es
+  `docs/interno/proyecto.md`; léelo por secciones solo cuando haga falta (es largo).
 
 ## Reglas
 

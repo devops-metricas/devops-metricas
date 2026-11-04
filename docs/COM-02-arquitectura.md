@@ -78,7 +78,7 @@ la notificación, de modo que la traza continúa de la API al worker. El stack q
 ## Infraestructura (Azure)
 
 Todo está en `infra/terraform` y se crea desde el pipeline; solo el bootstrap es manual
-(ver [reconstruccion.md](reconstruccion.md)).
+(ver [DEV-13-reconstruccion.md](DEV-13-reconstruccion.md)).
 
 | Recurso | Detalle |
 |---|---|
@@ -117,4 +117,4 @@ mínimos:
 - Los workflows de CI, publicación de imagen y entrega a dev/prod, y los Secrets de Kubernetes
   (`notifier-secrets`) los define el área de CI/CD.
 - Un solo nodo y una réplica por componente: no hay alta disponibilidad. Es una decisión consciente
-  de costo (ver [decisiones.md](decisiones.md)).
+  de costo (ver [COM-06-decisiones.md](COM-06-decisiones.md)).
