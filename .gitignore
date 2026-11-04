@@ -22,3 +22,6 @@ kubeconfig*
 !*.tfvars.example
 tfplan
 crash.log
+
+# Config local del backend de Terraform
+backend.hcl

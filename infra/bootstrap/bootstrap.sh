@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Bootstrap ÚNICO y manual (5.6 del enunciado): crea lo que Terraform necesita para existir.
 #   1. Cuenta de almacenamiento para el estado remoto (sin llaves de acceso, con versionado).
-#   2. Dos identidades de Entra ID con credenciales federadas para GitHub (OIDC, sin contraseñas):
-#        - infra  : Terraform en CI. Contributor en la suscripción (crea el grupo de recursos).
+#   2. Tres identidades de Entra ID con credenciales federadas para GitHub (OIDC, sin contraseñas):
+#        - infra  : apply de Terraform (main y entorno infra). Contributor en la suscripción.
+#        - plan   : plan en pull requests. Solo Reader: un PR puede editar el workflow.
 #        - deploy : despliegues. Solo "Virtual Machine Contributor" (az vm run-command).
 #
 # Requisitos: az CLI con sesión iniciada (`az login`) por alguien con rol Owner en la suscripción.
@@ -86,10 +87,19 @@ assign() { # appId rol scope
 echo ">> Identidad de infraestructura (Terraform)"
 INFRA_ID=$(ensure_app "sp-notifier-infra")
 ensure_fic "$INFRA_ID" gh-main "repo:$GITHUB_REPO:ref:refs/heads/main"
-ensure_fic "$INFRA_ID" gh-pr "repo:$GITHUB_REPO:pull_request"
 ensure_fic "$INFRA_ID" gh-env-infra "repo:$GITHUB_REPO:environment:infra"
 assign "$INFRA_ID" "Contributor" "$SCOPE"
 assign "$INFRA_ID" "Storage Blob Data Contributor" "$SA_ID"
+# Esta identidad ya NO acepta tokens de pull_request (un PR puede modificar el workflow).
+if [ -n "$(az ad app federated-credential list --id "$INFRA_ID" --query "[?name=='gh-pr'].name" -o tsv)" ]; then
+  az ad app federated-credential delete --id "$INFRA_ID" --federated-credential-id gh-pr -o none
+fi
+
+echo ">> Identidad de solo lectura para el plan de los pull requests"
+PLAN_ID=$(ensure_app "sp-notifier-plan")
+ensure_fic "$PLAN_ID" gh-pr "repo:$GITHUB_REPO:pull_request"
+assign "$PLAN_ID" "Reader" "$SCOPE"
+assign "$PLAN_ID" "Storage Blob Data Contributor" "$SA_ID" # tomar el candado del estado
 
 echo ">> Identidad de despliegue"
 DEPLOY_ID=$(ensure_app "sp-notifier-deploy")
@@ -105,7 +115,8 @@ No son secretos: con OIDC no existe ninguna contraseña que guardar.
 
   AZURE_TENANT_ID           = $TENANT_ID
   AZURE_SUBSCRIPTION_ID     = $SUBSCRIPTION_ID
-  AZURE_INFRA_CLIENT_ID     = $INFRA_ID      (workflow de Terraform)
+  AZURE_INFRA_CLIENT_ID     = $INFRA_ID      (apply de Terraform: Contributor)
+  AZURE_PLAN_CLIENT_ID      = $PLAN_ID       (plan en pull requests: solo lectura)
   AZURE_DEPLOY_CLIENT_ID    = $DEPLOY_ID     (workflow de entrega y rollback)
   TFSTATE_RESOURCE_GROUP    = $STATE_RG
   TFSTATE_STORAGE_ACCOUNT   = $STATE_SA
@@ -116,7 +127,6 @@ Contenido para infra/terraform/backend.hcl (uso local):
   storage_account_name = "$STATE_SA"
   container_name       = "$STATE_CONTAINER"
   key                  = "notifier.tfstate"
-  use_oidc             = true
   use_azuread_auth     = true
 
 Entornos de GitHub a crear (Settings > Environments): infra, dev, prod.
