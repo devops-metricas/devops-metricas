@@ -2,7 +2,8 @@ name: Terraform
 
 # PR            -> validate + plan (identidad de SOLO LECTURA). Nunca aplica.
 # push a main   -> validate + plan + apply, y el apply espera la aprobación del entorno "infra".
-# Los logs de este repo son públicos: las variables con datos personales son `sensitive`.
+# Los logs de este repo son públicos y GitHub imprime el bloque `env:` de cada paso: los datos
+# personales (IP, correo) van como SECRETS (se enmascaran), no como variables.
 
 on:
   pull_request:
@@ -31,8 +32,8 @@ env:
   TF_VAR_subscription_id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
   TF_VAR_dns_label: ${{ vars.TF_DNS_LABEL }}
   TF_VAR_ssh_public_key: ${{ vars.TF_SSH_PUBLIC_KEY }}
-  TF_VAR_admin_cidr: ${{ vars.TF_ADMIN_CIDR }}
-  TF_VAR_alert_emails: ${{ vars.TF_ALERT_EMAILS }}
+  TF_VAR_admin_cidr: ${{ secrets.TF_ADMIN_CIDR }}
+  TF_VAR_alert_emails: ${{ secrets.TF_ALERT_EMAILS }}
   TF_VAR_budget_start_date: ${{ vars.TF_BUDGET_START_DATE }}
 
 defaults:
