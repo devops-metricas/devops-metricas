@@ -18,6 +18,10 @@ set -euo pipefail
 case "$GITHUB_REPO" in
   owner/repo | */ | /* | "") echo "GITHUB_REPO debe ser el repo real (usuario/nombre), no el ejemplo." >&2; exit 1 ;;
 esac
+# GitHub emite el subject del token OIDC con IDs inmutables (repo:owner@id/repo@id). La credencial
+# federada debe coincidir EXACTAMENTE; se lee de la configuración real del repositorio.
+SUBJECT_PREFIX="${SUBJECT_PREFIX:-$(gh api "repos/$GITHUB_REPO/actions/oidc/customization/sub" --jq .sub_claim_prefix)}"
+: "${SUBJECT_PREFIX:?no se pudo leer el prefijo OIDC (¿gh con sesión y acceso al repo?)}"
 LOCATION="${LOCATION:-northcentralus}" # la política de la suscripción solo permite 5 regiones
 STATE_RG="${STATE_RG:-rg-notifier-tfstate}"
 # Nombre global único y determinista (3-24 caracteres, minúsculas y números).
@@ -86,8 +90,8 @@ assign() { # appId rol scope
 
 echo ">> Identidad de infraestructura (Terraform)"
 INFRA_ID=$(ensure_app "sp-notifier-infra")
-ensure_fic "$INFRA_ID" gh-main "repo:$GITHUB_REPO:ref:refs/heads/main"
-ensure_fic "$INFRA_ID" gh-env-infra "repo:$GITHUB_REPO:environment:infra"
+ensure_fic "$INFRA_ID" gh-main "$SUBJECT_PREFIX:ref:refs/heads/main"
+ensure_fic "$INFRA_ID" gh-env-infra "$SUBJECT_PREFIX:environment:infra"
 assign "$INFRA_ID" "Contributor" "$SCOPE"
 assign "$INFRA_ID" "Storage Blob Data Contributor" "$SA_ID"
 # Esta identidad ya NO acepta tokens de pull_request (un PR puede modificar el workflow).
@@ -97,14 +101,14 @@ fi
 
 echo ">> Identidad de solo lectura para el plan de los pull requests"
 PLAN_ID=$(ensure_app "sp-notifier-plan")
-ensure_fic "$PLAN_ID" gh-pr "repo:$GITHUB_REPO:pull_request"
+ensure_fic "$PLAN_ID" gh-pr "$SUBJECT_PREFIX:pull_request"
 assign "$PLAN_ID" "Reader" "$SCOPE"
 assign "$PLAN_ID" "Storage Blob Data Contributor" "$SA_ID" # tomar el candado del estado
 
 echo ">> Identidad de despliegue"
 DEPLOY_ID=$(ensure_app "sp-notifier-deploy")
-ensure_fic "$DEPLOY_ID" gh-env-dev "repo:$GITHUB_REPO:environment:dev"
-ensure_fic "$DEPLOY_ID" gh-env-prod "repo:$GITHUB_REPO:environment:prod"
+ensure_fic "$DEPLOY_ID" gh-env-dev "$SUBJECT_PREFIX:environment:dev"
+ensure_fic "$DEPLOY_ID" gh-env-prod "$SUBJECT_PREFIX:environment:prod"
 assign "$DEPLOY_ID" "Virtual Machine Contributor" "$SCOPE"
 
 cat <<EOF
