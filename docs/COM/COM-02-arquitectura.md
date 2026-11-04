@@ -78,7 +78,7 @@ la notificación, de modo que la traza continúa de la API al worker. El stack q
 ## Infraestructura (Azure)
 
 Todo está en `infra/terraform` y se crea desde el pipeline; solo el bootstrap es manual
-(ver [DEV-13-reconstruccion.md](DEV-13-reconstruccion.md)).
+(ver [DEV-13-reconstruccion.md](../DEV/DEV-13-reconstruccion.md)).
 
 | Recurso | Detalle |
 |---|---|

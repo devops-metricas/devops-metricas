@@ -12,7 +12,7 @@ from prometheus_client import Counter, Gauge, Histogram
 
 from notifier.config import settings
 
-# --- Métricas (documentadas en docs/metricas/catalogo.md) -------------------------------
+# --- Métricas (documentadas en docs/MET/MET-01-catalogo-de-indicadores.md) ---
 
 NOTIFICATIONS_ACCEPTED = Counter(
     "notifier_notifications_accepted_total",

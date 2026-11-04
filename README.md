@@ -12,12 +12,11 @@ mismo prefijo. Lo que es solo del equipo (reparto, enunciado, guía del escenari
 
 | Requisito | Documento |
 |---|---|
-| COM-02 | [Arquitectura](docs/COM-02-arquitectura.md) |
-| COM-06 | [Decisiones técnicas y alternativas descartadas](docs/COM-06-decisiones.md) |
-| DEV-06, DEV-07, DEV-09 | [Infraestructura](docs/COM-02-arquitectura.md#infraestructura-azure) y [evidencias](docs/evidencias/) |
-| DEV-13 | [Reconstrucción, apagado y destrucción](docs/DEV-13-reconstruccion.md) |
-| DEV-14 | [Costos](docs/DEV-14-costos.md) |
-| Evidencias de todos los requisitos | `docs/EVIDENCIAS.md` (pendiente) |
+| Todos | [Índice con responsable y estado de cada requisito](docs/EVIDENCIAS.md) |
+| COM-01 a COM-06 | [docs/COM/](docs/COM/) |
+| DEV-01 a DEV-14 | [docs/DEV/](docs/DEV/) |
+| MET-01 a MET-07 | [docs/MET/](docs/MET/) |
+| ESC1-01 a ESC1-10 | [docs/ESC1/](docs/ESC1/) |
 
 ## Arquitectura
 
@@ -31,7 +30,7 @@ cliente ──HTTPS──▶ API (FastAPI) ──┐
 ```
 
 Una sola imagen (`Dockerfile`) sirve para API, worker y migraciones; cambia el comando.
-Detalle en [docs/COM-02-arquitectura.md](docs/COM-02-arquitectura.md).
+Detalle en [docs/COM/COM-02-arquitectura.md](docs/COM/COM-02-arquitectura.md).
 
 ## Desarrollo local
 
@@ -122,5 +121,5 @@ k8s/            manifiestos (kustomize): base + overlays dev y prod
 infra/          Terraform (Azure + K3s) y bootstrap inicial
 .github/        CI, Terraform, entrega y rollback
 scripts/        pruebas reproducibles (lote, idempotencia)
-docs/           un documento por requisito (COM-02, COM-06, DEV-13, DEV-14), evidencias/ e interno/
+docs/           COM/, DEV/, MET/ y ESC1/ (un documento por requisito), evidencias/ e interno/; índice en EVIDENCIAS.md
 ```
