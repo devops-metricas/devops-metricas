@@ -111,9 +111,21 @@ Hecho:
 
 - `plan` revisado: [DEV-06-plan.png](../evidencias/DEV-06-plan.png).
 - `apply` aprobado: [DEV-06-apply.png](../evidencias/DEV-06-apply.png).
+- Nodo en `Ready`: [DEV-09-nodo-ready.txt](../evidencias/DEV-09-nodo-ready.txt).
+- Prueba de reconstrucción completa (`destroy` y luego `apply`), con tiempos:
+  [DEV-13-reconstruccion.txt](../evidencias/DEV-13-reconstruccion.txt).
+
+| Paso | Duración |
+|---|---|
+| `destroy` (incluye aprobación) | 2 min 17 s |
+| `apply` (incluye aprobación) | 1 min 31 s |
+| K3s instalado y nodo `Ready` tras el `apply` | ~2 min |
+| Certificado TLS tras aplicar `traefik-acme.yaml` | 34 s |
+
+La única intervención manual posterior al `apply` es `kubectl apply -f k8s/platform/traefik-acme.yaml`
+(sección 3). El nombre DNS no cambió.
 
 Pendiente:
 
-- Salida de `kubectl get nodes` con el nodo en `Ready`.
 - Cargos observados en *Cost Management* tras la primera semana (alimenta `DEV-14-costos.md`).
-- Prueba de reconstrucción completa: `destroy` seguido de `apply`, con el tiempo que tarda.
+- Despliegue de la aplicación sobre el clúster reconstruido (entrega de Diego).
