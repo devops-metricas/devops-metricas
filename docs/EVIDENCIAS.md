@@ -3,7 +3,7 @@
 Un documento por requisito, con su ID al inicio del nombre. Las capturas están en
 [evidencias/](evidencias). Este índice se actualiza al cerrar cada requisito.
 
-**Resumen:** 4 cubiertos, 10 parciales, 14 pendientes.
+**Resumen:** 5 cubiertos, 9 parciales, 14 pendientes.
 
 | Requisito | Documento | Responsable | Estado |
 |---|---|---|---|
@@ -25,7 +25,7 @@ Un documento por requisito, con su ID al inicio del nombre. Las capturas están 
 | DEV-10 | [DEV-10-configuracion-y-secretos.md](DEV/DEV-10-configuracion-y-secretos.md) | Diego | Pendiente |
 | DEV-11 | [DEV-11-probes-y-recursos.md](DEV/DEV-11-probes-y-recursos.md) | Diego | Parcial |
 | DEV-12 | [DEV-12-rollback.md](DEV/DEV-12-rollback.md) | Diego | Pendiente |
-| DEV-13 | [DEV-13-reconstruccion.md](DEV/DEV-13-reconstruccion.md) | Melissa | Parcial |
+| DEV-13 | [DEV-13-reconstruccion.md](DEV/DEV-13-reconstruccion.md) | Melissa | Cubierto |
 | DEV-14 | [DEV-14-costos.md](DEV/DEV-14-costos.md) | Melissa | Parcial |
 | MET-01 | [MET-01-catalogo-de-indicadores.md](MET/MET-01-catalogo-de-indicadores.md) | Camila | Pendiente |
 | MET-02 | [MET-02-logs-estructurados.md](MET/MET-02-logs-estructurados.md) | Camila | Pendiente |

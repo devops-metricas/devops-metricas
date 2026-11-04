@@ -1,0 +1,27 @@
+# 2026-11-04  Prueba de reconstrucción: destroy -> apply -> K3s Ready -> HTTPS (horas en UTC)
+
+## Infra ops: destroy (run 41787559733)
+inicio 06:44:38   fin 06:46:55   duración 2 min 17 s   resultado: success   (incluye la espera de aprobación del entorno infra)
+
+## Infra ops: apply (run 41789085171)
+inicio 06:58:49   fin 07:00:20   duración 1 min 31 s   resultado: success   (incluye la espera de aprobación del entorno infra)
+
+## VM reconstruida (ssh)
+cloud-init status: done
+instancia de cloud-init creada 07:00   (instance-id d22f86ab-537c-4044-a518-f92832870280, distinto de la VM destruida)
+NAME          STATUS   ROLES                  AGE   VERSION
+vm-notifier   Ready    control-plane,master   23m   v1.31.4+k3s1      (a las 07:24:55; el nodo quedó Ready ~2 min después del apply)
+Pods kube-system nuevos: coredns, traefik, local-path-provisioner, metrics-server, svclb-traefik: todos Running
+
+## Intervención manual tras el apply
+kubectl apply -f k8s/platform/traefik-acme.yaml          07:25:03
+certificado de Let's Encrypt válido (curl sin -k)         07:25:37   (34 s)
+subject: CN=notifier-melissa-esen.northcentralus.cloudapp.azure.com
+issuer:  C=US; O=Let's Encrypt; CN=YR1
+expire:  Feb  2 06:26:57 2027 GMT
+El nombre DNS y la IP pública no cambiaron (IP estática con etiqueta DNS fija).
+
+## Resumen
+destroy 2 min 17 s + apply 1 min 31 s + K3s Ready ~2 min + TLS 34 s. Los ~12 min entre destroy y apply
+fueron de espera manual (lanzar y aprobar el segundo workflow), no de la infraestructura.
+La prueba usó un backend de prueba (whoami) para forzar la emisión; se eliminó después.
