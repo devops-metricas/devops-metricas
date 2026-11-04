@@ -94,6 +94,15 @@ Cada decisión indica qué se eligió, por qué y qué se acepta a cambio.
 - **Por qué:** los Secrets de Kubernetes son base64, no cifrado; así quedan cifrados en el almacén.
 - **Se acepta:** protege el almacén en disco, no a quien tenga acceso de administrador al clúster.
 
+## 13. HTTPS con Let's Encrypt y rutas por ambiente
+
+- **Elegido:** certificado de Let's Encrypt (HTTP-01) emitido por el Traefik de K3s, con el nombre DNS
+  de Azure de la IP pública y rutas `/dev` y `/prod`.
+- **Por qué:** es gratis, se renueva solo y el nombre no cambia al reconstruir la VM. Cumple el
+  transporte cifrado que pide el enunciado (5.3) sin comprar un dominio.
+- **Se acepta:** un solo nombre para los dos ambientes (se separan por ruta) y que Traefik guarde el
+  certificado en un volumen del nodo; si se pierde, se vuelve a emitir.
+
 ## Alternativas descartadas
 
 | Tema | Alternativa | Por qué no |
@@ -110,3 +119,5 @@ Cada decisión indica qué se eligió, por qué y qué se acepta a cambio.
 | Exposición del clúster | Abrir 6443 con una lista de IP | El enunciado pide no exponer la API de Kubernetes. Se administra por SSH, restringido a una IP |
 | Costos | Automatizar el apagado desde la alerta de presupuesto | Las alertas solo notifican. Se usa apagado programado (23:00) más apagado manual |
 | Imagen | Una imagen por componente | Tres imágenes que mantener y publicar para el mismo código. Una sola, con comando distinto, se construye una vez y se promueve |
+| Certificado | Autofirmado, o cert-manager | El autofirmado no es de confianza y obliga a usar `-k`. cert-manager añade componentes que el resolver ACME de Traefik ya cubre |
+| Nombre DNS | Dominio propio, o `sslip.io` | Un dominio cuesta; `sslip.io` depende de la IP y se rompería al reconstruir |

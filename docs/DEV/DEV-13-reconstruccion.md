@@ -59,6 +59,19 @@ sudo k3s kubectl get nodes        # el nodo debe estar Ready
 sudo k3s kubectl get pods -A
 ```
 
+### Exposición HTTPS (una vez por clúster)
+
+Tras crear o reconstruir el clúster, configurar Traefik para pedir el certificado. Va aparte de
+cloud-init para que cambiarlo no reemplace la VM:
+
+```bash
+ssh -i ~/.ssh/notifier_azure azureuser@<TF_DNS_LABEL>.northcentralus.cloudapp.azure.com \
+  'sudo k3s kubectl apply -f -' < k8s/platform/traefik-acme.yaml
+```
+
+Los `ingress.yaml` de cada overlay llevan `REPLACE_FQDN`; la entrega lo sustituye por el nombre DNS
+de la VM. Let's Encrypt emite el certificado en el primer acceso HTTPS (~1 min).
+
 La API de Kubernetes (6443) no está expuesta: el firewall solo abre 80, 443 y SSH desde la IP
 autorizada. Si cambia la IP de quien administra, se actualiza el secret `TF_ADMIN_CIDR` y se aplica.
 
