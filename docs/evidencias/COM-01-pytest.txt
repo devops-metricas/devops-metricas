@@ -1,0 +1,33 @@
+# 2026-11-04  NOTIFIER_DATABASE_URL=postgresql://notifier:notifier@localhost:5432/notifier pytest -v   (PostgreSQL y Mailpit con docker compose)
+tests/test_integration.py::test_unauthorized_client_is_rejected PASSED
+tests/test_integration.py::test_accept_then_deliver_both_channels PASSED
+tests/test_integration.py::test_batch_of_100_all_have_id_and_status PASSED
+tests/test_integration.py::test_idempotency_sequential_and_conflict PASSED
+tests/test_integration.py::test_idempotency_concurrent PASSED
+tests/test_integration.py::test_transient_failure_retries_then_fails_and_can_be_reprocessed PASSED
+tests/test_integration.py::test_permanent_failure_is_not_retried PASSED
+tests/test_integration.py::test_orphaned_processing_job_is_recovered PASSED
+tests/test_integration.py::test_clients_cannot_read_each_others_notifications PASSED
+tests/test_integration.py::test_stats_by_channel_and_status PASSED
+tests/test_unit.py::test_content_hash_depends_on_content_not_key PASSED
+tests/test_unit.py::test_email_recipient_needs_at_sign PASSED
+tests/test_unit.py::test_invalid_requests_rejected[bad0] PASSED
+tests/test_unit.py::test_invalid_requests_rejected[bad1] PASSED
+tests/test_unit.py::test_invalid_requests_rejected[bad2] PASSED
+tests/test_unit.py::test_backoff_is_exponential PASSED
+tests/test_unit.py::test_invalid_domain_is_permanent PASSED
+tests/test_unit.py::test_injected_fault_is_transient PASSED
+tests/test_unit.py::test_smtp_error_classification[exc0-TransientError] PASSED
+tests/test_unit.py::test_smtp_error_classification[exc1-PermanentError] PASSED
+tests/test_unit.py::test_smtp_error_classification[exc2-TransientError] PASSED
+tests/test_unit.py::test_smtp_error_classification[exc3-TransientError] PASSED
+tests/test_unit.py::test_api_rejects_missing_key_without_touching_db PASSED
+======================== 23 passed in 1.92s =========================
+
+# Solo unitarias (sin base de datos): 13 passed, 10 skipped
+
+# 2026-11-04  scripts/smoke.py batch   (API y worker locales)
+OK    100 solicitudes aceptadas (202)
+OK    100 identificadores distintos
+OK    todas llegan a un estado final consultable
+estados: {'delivered': 100}

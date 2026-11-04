@@ -29,3 +29,9 @@
 
 Ejecutar los comandos contra el ambiente `dev` en el clúster y guardar la salida en
 [evidencias/](../evidencias) con el prefijo `ESC1-`. Depende de que la aplicación esté desplegada (Diego).
+
+## Evidencia
+
+[ESC1-smoke-local.txt](../evidencias/ESC1-smoke-local.txt): P1-1 (100 solicitudes), P1-3 (idempotencia
+secuencial y concurrente) y recuentos de `GET /v1/stats`, ejecutados en local. P1-2 y P1-4 pasaron en
+local sin captura guardada.

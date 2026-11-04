@@ -10,8 +10,11 @@
 
 ## Qué hay y qué falta
 
-K3s se instala por cloud-init; nodo `Ready` verificado por SSH. Falta guardar la captura de `kubectl get nodes`.
+K3s se instala por cloud-init (con cifrado de secretos). El nodo está `Ready` y Traefik, CoreDNS y el
+almacenamiento local corren, también tras apagar y encender la VM. Falta ver los workloads de la
+aplicación en el clúster, que depende de la entrega de Diego (DEV-04 y DEV-05).
 
 ## Evidencia
 
-Pendiente de enlazar. Guardar las capturas en [evidencias/](../evidencias) con el prefijo `DEV-09-`.
+- [DEV-09-nodo-ready.txt](../evidencias/DEV-09-nodo-ready.txt): `kubectl get nodes -o wide` y `get pods -A`.
+- Acceso público con TLS: [COM-02-tls.txt](../evidencias/COM-02-tls.txt).
