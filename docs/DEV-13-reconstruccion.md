@@ -92,9 +92,15 @@ for app in sp-notifier-infra sp-notifier-plan sp-notifier-deploy; do
 done
 ```
 
-## 6. Pendiente de documentar con evidencia
+## 6. Evidencia
 
-- Captura del `plan` revisado y del `apply` aprobado.
+Hecho:
+
+- `plan` revisado: [DEV-06-plan.png](evidencias/DEV-06-plan.png).
+- `apply` aprobado: [DEV-06-apply.png](evidencias/DEV-06-apply.png).
+
+Pendiente:
+
 - Salida de `kubectl get nodes` con el nodo en `Ready`.
-- Cargos observados en *Cost Management* tras la primera semana (alimenta `docs/costos.md`).
+- Cargos observados en *Cost Management* tras la primera semana (alimenta `DEV-14-costos.md`).
 - Prueba de reconstrucción completa: `destroy` seguido de `apply`, con el tiempo que tarda.

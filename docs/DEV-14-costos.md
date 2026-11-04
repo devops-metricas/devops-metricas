@@ -37,7 +37,7 @@ sumarse aquí antes de activarlo.
 ## 2. Medidas para reducir el gasto
 
 1. **Apagar la VM al terminar cada sesión:** *Actions → Infra ops → `deallocate`* (ver
-   [reconstruccion.md](reconstruccion.md)).
+   [DEV-13-reconstruccion.md](DEV-13-reconstruccion.md)).
 2. **Apagado automático** todos los días a las 23:00 (hora de América Central), por si alguien olvida
    el paso anterior. No lo sustituye.
 3. **Alertas de presupuesto** al 50, 80 y 100 % de US$100, por correo. Solo notifican: no detienen

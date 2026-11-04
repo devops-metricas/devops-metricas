@@ -4,9 +4,20 @@ Proyecto de cátedra (DevOps + Métricas de Software), **Escenario 1**. Las apli
 enviar mensajes; la plataforma los entrega por correo de prueba o como notificación interna,
 reintenta fallas pasajeras, evita duplicados y deja consultar qué pasó con cada envío.
 
-- Requisitos del escenario: [docs/escenario-1-notificaciones.md](docs/escenario-1-notificaciones.md)
-- Seguimiento de requisitos y evidencias: [docs/EVIDENCIAS.md](docs/EVIDENCIAS.md)
-- Decisiones técnicas: [docs/decisiones.md](docs/decisiones.md)
+## Documentación por requisito
+
+Cada documento lleva el ID del requisito que sustenta. Las capturas están en `docs/evidencias/`, con el
+mismo prefijo. Lo que es solo del equipo (reparto, enunciado, guía del escenario) está en
+[docs/interno/](docs/interno/).
+
+| Requisito | Documento |
+|---|---|
+| COM-02 | [Arquitectura](docs/COM-02-arquitectura.md) |
+| COM-06 | [Decisiones técnicas y alternativas descartadas](docs/COM-06-decisiones.md) |
+| DEV-06, DEV-07, DEV-09 | [Infraestructura](docs/COM-02-arquitectura.md#infraestructura-azure) y [evidencias](docs/evidencias/) |
+| DEV-13 | [Reconstrucción, apagado y destrucción](docs/DEV-13-reconstruccion.md) |
+| DEV-14 | [Costos](docs/DEV-14-costos.md) |
+| Evidencias de todos los requisitos | `docs/EVIDENCIAS.md` (pendiente) |
 
 ## Arquitectura
 
@@ -20,7 +31,7 @@ cliente ──HTTPS──▶ API (FastAPI) ──┐
 ```
 
 Una sola imagen (`Dockerfile`) sirve para API, worker y migraciones; cambia el comando.
-Detalle en [docs/arquitectura.md](docs/arquitectura.md).
+Detalle en [docs/COM-02-arquitectura.md](docs/COM-02-arquitectura.md).
 
 ## Desarrollo local
 
@@ -111,5 +122,5 @@ k8s/            manifiestos (kustomize): base + overlays dev y prod
 infra/          Terraform (Azure + K3s) y bootstrap inicial
 .github/        CI, Terraform, entrega y rollback
 scripts/        pruebas reproducibles (lote, idempotencia)
-docs/           evidencias, decisiones, arquitectura, métricas, reconstrucción, costos
+docs/           un documento por requisito (COM-02, COM-06, DEV-13, DEV-14), evidencias/ e interno/
 ```
