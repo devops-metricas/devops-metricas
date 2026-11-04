@@ -25,3 +25,6 @@ crash.log
 
 # Config local del backend de Terraform
 backend.hcl
+
+# Config local de Claude Code
+.claude/settings.local.json

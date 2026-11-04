@@ -1,0 +1,33 @@
+# Notificaciones multicanal (Escenario 1)
+
+Proyecto de cátedra (DevOps + Métricas). API + worker en Python sobre PostgreSQL, desplegados en K3s en
+una VM de Azure con Terraform. Descripción general en [README.md](README.md).
+
+## Comandos
+
+```bash
+source .venv/bin/activate
+ruff check . && ruff format --check .
+pytest                                    # unitarias
+docker compose up -d                      # PostgreSQL + Mailpit para pruebas de integración
+NOTIFIER_DATABASE_URL=postgresql://notifier:notifier@localhost:5432/notifier pytest   # + integración
+```
+
+`scripts/smoke.py` prueba una API en ejecución (ver README).
+
+## Estructura
+
+- `src/notifier/`: API, worker, canales, migraciones SQL. `tests/`: pruebas.
+- `k8s/`: kustomize, `base/` y `overlays/dev|prod`. `infra/`: Terraform y bootstrap.
+- `.github/workflows/`: `terraform.yml` (plan/apply) e `infra-ops.yml` (apagar, encender, destruir).
+- `docs/`: para entender el sistema, `arquitectura.md` y `decisiones.md`. El enunciado completo está en
+  `proyecto.md`; léelo por secciones solo cuando haga falta (es largo).
+
+## Reglas
+
+- Todo cambio entra por pull request; `main` está protegido.
+- Nunca secretos, claves ni kubeconfigs en el repo. La IP de administración y los correos son *secrets*
+  de GitHub, no variables.
+- No ejecutar `terraform apply`/`destroy` ni acciones de `Infra ops` sin que lo pida la persona: crean
+  o destruyen recursos que cobran. La VM se apaga al terminar cada sesión.
+- Texto y comentarios en español, como el resto del repo.
