@@ -1,0 +1,58 @@
+name: CI
+
+# PR y push a main -> lint, formato y pruebas (unitarias + integración con PostgreSQL).
+# El job "ci" es el chequeo requerido por la protección de rama de main.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read # privilegio mínimo: el CI solo lee el código
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: notifier
+          POSTGRES_PASSWORD: notifier
+          POSTGRES_DB: notifier
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U notifier"
+          --health-interval 3s
+          --health-retries 20
+    env:
+      NOTIFIER_DATABASE_URL: postgresql://notifier:notifier@localhost:5432/notifier
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: Instalar dependencias
+        run: pip install -e ".[dev]"
+      - name: Lint
+        run: ruff check .
+      - name: Formato
+        run: ruff format --check .
+      - name: Pruebas (unitarias e integración)
+        run: pytest -v
+
+  imagen:
+    # Verifica que la imagen construye en cada PR; la publicación es otro workflow (DEV-04).
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build --build-arg GIT_SHA=${{ github.sha }} -t notifier:ci .
