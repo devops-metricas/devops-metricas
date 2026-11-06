@@ -12,5 +12,5 @@ configMapGenerator:
       - NOTIFIER_ENVIRONMENT=prod
 images:
   - name: notifier
-    newName: ghcr.io/REPLACE_OWNER/notifier
+    newName: ghcr.io/kmmelissat/notifier
     newTag: latest
