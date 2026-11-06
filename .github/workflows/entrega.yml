@@ -1,0 +1,93 @@
+name: Entrega
+
+# Publicar imagen (en main) -> despliega a dev solo -> espera la aprobación del entorno "prod" -> prod.
+# Manual (workflow_dispatch) con un SHA: vuelve a desplegar ese commit, p. ej. para un rollback (DEV-12).
+# Se autentica en Azure con OIDC (identidad sp-notifier-deploy: solo "Virtual Machine Contributor") y
+# aplica el manifiesto dentro de la VM con `az vm run-command`: la API de Kubernetes no se expone.
+
+on:
+  workflow_run:
+    workflows: ["Publicar imagen"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: SHA completo (40 caracteres) de un commit de main con imagen publicada
+        required: true
+      entorno:
+        description: Hasta dónde llegar
+        type: choice
+        options: [dev, prod]
+        default: dev
+
+permissions:
+  contents: read
+  id-token: write # OIDC hacia Azure: sin contraseñas guardadas
+
+concurrency:
+  group: entrega # un despliegue a la vez; uno nuevo espera, no cancela a medias
+  cancel-in-progress: false
+
+env:
+  RESOURCE_GROUP: rg-notifier
+  VM_NAME: vm-notifier
+  # DNS público (lo fija Terraform: etiqueta DNS + región). La región es la de variables.tf.
+  FQDN: ${{ vars.TF_DNS_LABEL }}.northcentralus.cloudapp.azure.com
+  SHA: ${{ inputs.sha || github.event.workflow_run.head_sha }}
+
+jobs:
+  dev:
+    # Con workflow_run solo si "Publicar imagen" terminó bien; manual solo desde main.
+    if: >-
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+      || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+    environment: dev
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.SHA }}
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_DEPLOY_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - name: Desplegar a dev
+        run: ./scripts/desplegar.sh dev "$SHA"
+      - name: Resumen
+        run: |
+          {
+            echo '### Desplegado en dev'
+            echo "- Imagen: \`ghcr.io/kmmelissat/notifier:${SHA}\`"
+            echo "- Commit: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${SHA}"
+            echo "- Workflow: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  prod:
+    needs: dev
+    # El entorno "prod" exige revisores: el job no arranca hasta que alguien aprueba.
+    if: github.event_name == 'workflow_run' || inputs.entorno == 'prod'
+    runs-on: ubuntu-latest
+    environment: prod
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.SHA }}
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_DEPLOY_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - name: Desplegar a prod
+        run: ./scripts/desplegar.sh prod "$SHA"
+      - name: Resumen
+        run: |
+          {
+            echo '### Desplegado en prod'
+            echo "- Imagen: \`ghcr.io/kmmelissat/notifier:${SHA}\`"
+            echo "- Commit: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${SHA}"
+            echo "- Workflow: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          } >> "$GITHUB_STEP_SUMMARY"
