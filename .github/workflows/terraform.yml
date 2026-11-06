@@ -13,8 +13,7 @@ on:
     paths: ["infra/terraform/**", ".github/workflows/terraform.yml"]
 
 permissions:
-  contents: read
-  id-token: write # OIDC hacia Azure: sin contraseñas guardadas
+  contents: read # por defecto; id-token: write solo en los jobs que hablan con Azure (plan y apply)
 
 concurrency:
   group: terraform # un solo plan/apply a la vez; el candado del estado es la segunda barrera
@@ -53,6 +52,9 @@ jobs:
   plan:
     needs: validate
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # OIDC hacia Azure: sin contraseñas guardadas
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
@@ -80,6 +82,9 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: infra
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
