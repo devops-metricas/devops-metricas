@@ -10,7 +10,15 @@
 
 ## Qué hay y qué falta
 
-Historial y pull requests revisados, y protección de `main`.
+Todo el código, la infraestructura (`infra/`), los manifiestos (`k8s/`) y la documentación están en Git, sin
+secretos. Los cambios entran por pull request desde ramas con prefijo por tipo (`ci/`, `docs/`, `fix/`, `feat/`,
+`infra/`), y el historial conserva cada PR mergeado con el ID del requisito en el título. Listado de PR:
+`gh pr list --state all`.
+
+**Falta la protección de `main`**: hoy no hay reglas ni *rulesets* en el repositorio (la API devuelve 404), así que
+la regla "todo entra por PR" depende de la disciplina del equipo. Configuración propuesta, que requiere permisos
+de administración (Melissa), en Settings, Rules, Rulesets: requerir pull request con 1 aprobación, requerir los
+checks `ci` e `imagen`, bloquear los push directos y los force-push. Cubre también DEV-03.
 
 ## Evidencia
 

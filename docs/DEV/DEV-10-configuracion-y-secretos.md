@@ -16,7 +16,10 @@
 
 **Secretos fuera de la imagen y del repo.** `api`, `worker` y `postgres` leen `database-url` y
 `postgres-password` del Secret `notifier-secrets`, que **no está versionado**. **Falta crearlo** en
-`notifier-dev` y `notifier-prod`. Mientras no exista, los pods no arrancan.
+`notifier-dev` y `notifier-prod`; mientras no exista, los pods no arrancan. Lo crea
+[scripts/crear-secretos.sh](../../scripts/crear-secretos.sh): genera una contraseña distinta por entorno, arma
+`database-url`, aplica el Secret dentro de la VM con `az vm run-command`, no imprime valores y no pisa un Secret
+existente (cambiar la contraseña sin cambiarla en PostgreSQL dejaría a la API sin acceso). Sin ejecutar todavía.
 
 **Permisos mínimos de los pipelines** (revisados):
 
