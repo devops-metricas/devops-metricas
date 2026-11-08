@@ -19,7 +19,9 @@
 `notifier-dev` y `notifier-prod`; mientras no exista, los pods no arrancan. Lo crea
 [scripts/crear-secretos.sh](../../scripts/crear-secretos.sh): genera una contraseña distinta por entorno, arma
 `database-url`, aplica el Secret dentro de la VM con `az vm run-command`, no imprime valores y no pisa un Secret
-existente (cambiar la contraseña sin cambiarla en PostgreSQL dejaría a la API sin acceso). Sin ejecutar todavía.
+existente (cambiar la contraseña sin cambiarla en PostgreSQL dejaría a la API sin acceso). Se lanza desde Actions con el workflow
+[crear-secretos.yml](../../.github/workflows/crear-secretos.yml) (entorno `dev` o `prod`), que usa la identidad
+`sp-notifier-deploy`; no hace falta una cuenta de Azure personal. Sin ejecutar todavía.
 
 **Permisos mínimos de los pipelines** (revisados):
 
