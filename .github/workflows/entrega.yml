@@ -45,6 +45,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev
     timeout-minutes: 20
+    outputs:
+      vm_encendida: ${{ steps.vm.outputs.encendida }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -54,9 +56,34 @@ jobs:
           client-id: ${{ vars.AZURE_DEPLOY_CLIENT_ID }}
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      # La VM se apaga al terminar cada sesión. Tras un merge automático eso no es un error del
+      # código: se omite el despliegue con un aviso. En un despliegue manual (p. ej. rollback) sí falla.
+      - name: Comprobar que la VM está encendida
+        id: vm
+        run: |
+          estado=$(az vm get-instance-view -g "$RESOURCE_GROUP" -n "$VM_NAME" \
+            --query "instanceView.statuses[?starts_with(code,'PowerState/')].code | [0]" -o tsv)
+          echo "Estado de la VM: ${estado}"
+          if [ "$estado" = "PowerState/running" ]; then
+            echo "encendida=true" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "::error::La VM no está encendida (${estado}). Enciéndela con Infra ops y repite."
+            exit 1
+          else
+            echo "encendida=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::VM apagada (${estado}): no se desplegó el commit ${SHA}. Enciende la VM y ejecuta Entrega manualmente con ese SHA."
+            {
+              echo '### Despliegue omitido: la VM está apagada'
+              echo "- Estado: \`${estado}\`"
+              echo "- Commit sin desplegar: ${SHA}"
+              echo '- Enciende la VM con Infra ops y ejecuta Entrega manualmente con ese SHA.'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Desplegar a dev
+        if: steps.vm.outputs.encendida == 'true'
         run: ./scripts/desplegar.sh dev "$SHA"
       - name: Resumen
+        if: steps.vm.outputs.encendida == 'true'
         run: |
           {
             echo '### Desplegado en dev'
@@ -68,7 +95,8 @@ jobs:
   prod:
     needs: dev
     # El entorno "prod" exige revisores: el job no arranca hasta que alguien aprueba.
-    if: github.event_name == 'workflow_run' || inputs.entorno == 'prod'
+    # No arranca si dev se omitió por la VM apagada.
+    if: needs.dev.outputs.vm_encendida == 'true' && (github.event_name == 'workflow_run' || inputs.entorno == 'prod')
     runs-on: ubuntu-latest
     environment: prod
     timeout-minutes: 20
