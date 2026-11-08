@@ -39,7 +39,7 @@ export API_URL=https://$FQDN/dev API_KEY=ntf_... ADMIN_KEY=ntf_...
 | 3 | `python scripts/smoke.py idempotency` | COM-01, ESC1 P1-3 | 5 repeticiones, un solo efecto |
 | 4 | `python scripts/smoke.py email-failure` | COM-04 | `failed` sin reintentos |
 | 5 | **COM-03** (ver abajo) | COM-03 | datos íntegros tras reiniciar Pods |
-| 6 | `RESTART_CMD="..." python scripts/smoke.py recovery` | COM-04, ESC1 P1-4 | pendientes se entregan tras reiniciar el worker |
+| 6 | `RESTART_CMD="..." python scripts/smoke.py recovery` | COM-04, ESC1 P1-4 | pendientes se entregan tras reiniciar el worker (ver abajo) |
 | 7 | `email-degraded` (ver abajo) | COM-04, ESC1 P1-2 | reintenta 3 veces, canal interno vivo |
 
 Cada prueba termina con código distinto de cero si falla: guardar la salida completa como evidencia.
@@ -51,11 +51,21 @@ Cada prueba termina con código distinto de cero si falla: guardar la salida com
 3. Repetir `GET /v1/stats` y consultar un par de IDs: los conteos y los estados deben coincidir.
 4. Guardar ambas salidas como `COM-03-antes.txt` y `COM-03-despues.txt`.
 
+### `recovery`: dejar el worker detenido antes
+
+En el clúster el worker despacha más rápido de lo que el script lee el estado y la prueba falla con
+"hay trabajos pendientes". Escalar a 0 antes y usar "escalar a 1" como `RESTART_CMD`:
+
+```bash
+kubectl -n notifier-dev scale deploy/worker --replicas=0
+RESTART_CMD='<run-command que ejecuta: kubectl -n notifier-dev scale deploy/worker --replicas=1>' python scripts/smoke.py recovery
+```
+
 ### `email-degraded` (requiere cambiar el worker)
 
 `NOTIFIER_EMAIL_FAULT_RATE` vive en el ConfigMap generado `notifier-config`. Para la prueba:
-subir la tasa a `1.0` en el entorno, esperar el rollout del worker, correr `email-degraded` y
-**volver a `0` al terminar**. Es un cambio reversible (regla 5.12); no dejarlo así en `dev`.
+`kubectl -n notifier-dev set env deploy/worker NOTIFIER_EMAIL_FAULT_RATE=1.0`, esperar el rollout, correr
+`email-degraded` y **volver atrás al terminar** con `set env deploy/worker NOTIFIER_EMAIL_FAULT_RATE-`. Es un cambio reversible (regla 5.12); no dejarlo así en `dev`.
 
 ## 4. Al terminar
 
