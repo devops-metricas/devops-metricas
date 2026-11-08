@@ -24,9 +24,9 @@ trap 'rm -rf "$TMP"' EXIT
 
 echo ">> Renderizando $ENTORNO con la imagen $SHA"
 cp -R "$RAIZ/k8s" "$TMP/k8s" # kustomize edit modifica el overlay: se trabaja sobre una copia
-(cd "$TMP/k8s/overlays/$ENTORNO" && kustomize edit set image "ghcr.io/kmmelissat/notifier:$SHA")
+(cd "$TMP/k8s/overlays/$ENTORNO" && kustomize edit set image "ghcr.io/devops-metricas/notifier:$SHA")
 kustomize build "$TMP/k8s/overlays/$ENTORNO" | sed "s/REPLACE_FQDN/$FQDN/g" > "$TMP/manifiesto.yaml"
-grep -q "ghcr.io/kmmelissat/notifier:$SHA" "$TMP/manifiesto.yaml" || { echo "El manifiesto no usa el SHA pedido." >&2; exit 1; }
+grep -q "ghcr.io/devops-metricas/notifier:$SHA" "$TMP/manifiesto.yaml" || { echo "El manifiesto no usa el SHA pedido." >&2; exit 1; }
 
 # Script que corre en la VM (como root). run-command no propaga el código de salida: se exige la marca final.
 {
@@ -46,4 +46,4 @@ grep -q DESPLIEGUE_OK <<<"$SALIDA" || { echo "El despliegue de $ENTORNO falló."
 echo ">> Comprobando https://$FQDN/$ENTORNO/readyz"
 curl -fsS --retry 12 --retry-delay 10 --retry-all-errors "https://$FQDN/$ENTORNO/readyz"
 echo
-echo "Desplegado $ENTORNO: ghcr.io/kmmelissat/notifier:$SHA"
+echo "Desplegado $ENTORNO: ghcr.io/devops-metricas/notifier:$SHA"
