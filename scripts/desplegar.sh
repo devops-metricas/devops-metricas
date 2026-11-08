@@ -24,7 +24,7 @@ trap 'rm -rf "$TMP"' EXIT
 
 echo ">> Renderizando $ENTORNO con la imagen $SHA"
 cp -R "$RAIZ/k8s" "$TMP/k8s" # kustomize edit modifica el overlay: se trabaja sobre una copia
-(cd "$TMP/k8s/overlays/$ENTORNO" && kustomize edit set image "notifier=ghcr.io/kmmelissat/notifier:$SHA")
+(cd "$TMP/k8s/overlays/$ENTORNO" && kustomize edit set image "ghcr.io/kmmelissat/notifier:$SHA")
 kustomize build "$TMP/k8s/overlays/$ENTORNO" | sed "s/REPLACE_FQDN/$FQDN/g" > "$TMP/manifiesto.yaml"
 grep -q "ghcr.io/kmmelissat/notifier:$SHA" "$TMP/manifiesto.yaml" || { echo "El manifiesto no usa el SHA pedido." >&2; exit 1; }
 
