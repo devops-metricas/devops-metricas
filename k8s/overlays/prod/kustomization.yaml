@@ -11,6 +11,6 @@ configMapGenerator:
     literals:
       - NOTIFIER_ENVIRONMENT=prod
 images:
-  - name: notifier
-    newName: ghcr.io/kmmelissat/notifier
+  # La base ya renombra notifier a esta imagen; aquí solo se cambia la etiqueta.
+  - name: ghcr.io/kmmelissat/notifier
     newTag: latest
