@@ -1,11 +1,11 @@
 # DEV-08: Integrar la validación de Terraform en GitHub Actions.
 
-> **Parcial. Faltan las capturas.**
+> **Cubierto.**
 
 | | |
 |---|---|
 | **Responsable** | Diego |
-| **Estado** | Parcial |
+| **Estado** | Cubierto |
 | **Evidencia mínima que se revisa** | Validación y plan ante cambios, sin aplicar automáticamente PR no aprobados. |
 
 ## Qué hay y qué falta
@@ -30,17 +30,16 @@ El workflow [terraform.yml](../../.github/workflows/terraform.yml) se dispara cu
 - **Datos personales**: la IP de administración y los correos van como *secrets*, para que se enmascaren
   en los logs públicos.
 
-Falta: capturar las ejecuciones de abajo y enlazarlas. Estado Parcial hasta tener las capturas.
-
 ## Evidencia
 
-Ejecuciones reales del workflow:
+1. **PR: `validate` y `plan` en verde, `apply` omitido.** Ejecución del PR #19,
+   [run 42313395454](https://github.com/kmmelissat/devops-metricas/actions/runs/42313395454) (`on: pull_request`):
+   ![Plan en un PR, sin apply](../evidencias/DEV-08-pr-plan.png)
+2. **Resumen del plan** de esa misma ejecución, con "No changes":
+   ![Resumen del plan](../evidencias/DEV-08-plan-resumen.png)
+3. **Push a `main`: el `apply` solo corre tras la aprobación del entorno `infra`.** Ejecución del merge del PR #19,
+   [run 42314600054](https://github.com/kmmelissat/devops-metricas/actions/runs/42314600054) (`on: push`). La duración
+   total, 1 d 21 h, es el tiempo que esperó la aprobación:
+   ![Apply tras la aprobación](../evidencias/DEV-08-apply-aprobacion.png)
 
-- Plan en un PR, en verde: [run 41774273160](https://github.com/kmmelissat/devops-metricas/actions/runs/41774273160).
-- Push a `main` con plan y apply aprobado: [run 41774548688](https://github.com/kmmelissat/devops-metricas/actions/runs/41774548688).
-
-Capturas por tomar, en [evidencias/](../evidencias):
-
-1. `DEV-08-pr-plan.png`: jobs `validate` y `plan` de un PR, sin job `apply`.
-2. `DEV-08-plan-resumen.png`: el resumen del `plan`.
-3. `DEV-08-apply-aprobacion.png`: el job `apply` esperando la aprobación del entorno `infra`.
+Otra ejecución de plan en PR: [run 41774273160](https://github.com/kmmelissat/devops-metricas/actions/runs/41774273160).
