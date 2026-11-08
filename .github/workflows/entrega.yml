@@ -60,7 +60,7 @@ jobs:
         run: |
           {
             echo '### Desplegado en dev'
-            echo "- Imagen: \`ghcr.io/kmmelissat/notifier:${SHA}\`"
+            echo "- Imagen: \`ghcr.io/devops-metricas/notifier:${SHA}\`"
             echo "- Commit: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${SHA}"
             echo "- Workflow: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
           } >> "$GITHUB_STEP_SUMMARY"
@@ -87,7 +87,7 @@ jobs:
         run: |
           {
             echo '### Desplegado en prod'
-            echo "- Imagen: \`ghcr.io/kmmelissat/notifier:${SHA}\`"
+            echo "- Imagen: \`ghcr.io/devops-metricas/notifier:${SHA}\`"
             echo "- Commit: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${SHA}"
             echo "- Workflow: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
           } >> "$GITHUB_STEP_SUMMARY"

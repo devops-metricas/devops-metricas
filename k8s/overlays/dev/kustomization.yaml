@@ -13,5 +13,5 @@ configMapGenerator:
 # newTag lo escribe el pipeline de entrega (sha del commit); nunca "latest" en dev/prod.
 images:
   # La base ya renombra notifier a esta imagen; aquí solo se cambia la etiqueta.
-  - name: ghcr.io/kmmelissat/notifier
+  - name: ghcr.io/devops-metricas/notifier
     newTag: latest

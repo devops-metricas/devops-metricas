@@ -21,5 +21,5 @@ configMapGenerator:
 # La imagen se fija en los overlays (nombre y etiqueta = sha del commit).
 images:
   - name: notifier
-    newName: ghcr.io/kmmelissat/notifier
+    newName: ghcr.io/devops-metricas/notifier
     newTag: latest
