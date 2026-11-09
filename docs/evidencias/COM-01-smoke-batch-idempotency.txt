@@ -1,0 +1,9 @@
+OK    100 solicitudes aceptadas (202)
+OK    100 identificadores distintos
+OK    todas llegan a un estado final consultable
+estados: {'delivered': 100}
+OK    secuencial: 5 respuestas, una notificación
+OK    secuencial: 202 y luego 200
+OK    concurrente: 5 respuestas, una notificación
+OK    concurrente: exactamente un 202
+OK    misma clave con contenido distinto se rechaza (409)

@@ -1,6 +1,6 @@
 # ESC1: Requisitos del Escenario 1 (Notificaciones multicanal)
 
-> **Parcial. Completa Melissa.** Implementado y probado en local; falta ejecutarlo contra el clúster.
+> **Parcial. Completa Melissa.** Implementado, probado en local y en `dev` en el clúster. Falta P1-5 (Camila y Rene).
 
 | Requisito | Dónde se cumple | Prueba |
 |---|---|---|
@@ -19,19 +19,21 @@
 
 | Prueba | Comando | Estado |
 |---|---|---|
-| P1-1 Carga controlada (100 solicitudes) | `smoke.py batch` | Pasa en local |
-| P1-2 Dependencia degradada | `smoke.py email-degraded` (worker con `NOTIFIER_EMAIL_FAULT_RATE>0`) | Pasa en local |
-| P1-3 Idempotencia secuencial y concurrente | `smoke.py idempotency` | Pasa en local |
-| P1-4 Recuperación al reiniciar el worker | `smoke.py recovery` | Pasa en local; falta contra el clúster |
+| P1-1 Carga controlada (100 solicitudes) | `smoke.py batch` | Pasa en local y en el clúster |
+| P1-2 Dependencia degradada | `smoke.py email-degraded` (worker con `NOTIFIER_EMAIL_FAULT_RATE>0`) | Pasa en local y en el clúster |
+| P1-3 Idempotencia secuencial y concurrente | `smoke.py idempotency` | Pasa en local y en el clúster |
+| P1-4 Recuperación al reiniciar el worker | `smoke.py recovery` | Pasa en local y en el clúster |
 | P1-5 Correlación de extremo a extremo y alerta | Trazas y alerta (métricas) | **Pendiente por Camila y Rene** (MET-04 y MET-06) |
 
 ## Qué falta
 
-Ejecutar los comandos contra el ambiente `dev` en el clúster y guardar la salida en
-[evidencias/](../evidencias) con el prefijo `ESC1-`. Depende de que la aplicación esté desplegada (Diego).
+P1-5 (correlación de extremo a extremo y alerta), que depende de MET-04 y MET-06.
 
 ## Evidencia
 
 [ESC1-smoke-local.txt](../evidencias/ESC1-smoke-local.txt): P1-1 (100 solicitudes), P1-3 (idempotencia
 secuencial y concurrente) y recuentos de `GET /v1/stats`, ejecutados en local. P1-2 y P1-4:
 [COM-04-degradado-y-recuperacion.txt](../evidencias/COM-04-degradado-y-recuperacion.txt).
+En el clúster (`dev`, 2026-11-08): [COM-01-smoke-batch-idempotency.txt](../evidencias/COM-01-smoke-batch-idempotency.txt),
+[COM-04-smoke-errores-y-recovery.txt](../evidencias/COM-04-smoke-errores-y-recovery.txt) y
+[COM-05-smoke-access.txt](../evidencias/COM-05-smoke-access.txt).

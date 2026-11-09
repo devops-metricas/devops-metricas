@@ -1,17 +1,18 @@
 # COM-03: Persistir la información cuya conservación exija el escenario.
 
-> **Pendiente por Melissa.**
+> **Cubierto.**
 
 | | |
 |---|---|
 | **Responsable** | Melissa |
-| **Estado** | Pendiente |
+| **Estado** | Cubierto |
 | **Evidencia mínima que se revisa** | Demostración de persistencia ante reinicio de componentes. |
 
 ## Qué hay y qué falta
 
-Requiere la aplicación desplegada en el clúster (depende de Diego: DEV-04 y DEV-05). El esquema ya persiste en PostgreSQL con volumen (`k8s/base/postgres.yaml`). Falta demostrar el reinicio de Pods sin pérdida de datos.
+El esquema persiste en PostgreSQL con volumen (`k8s/base/postgres.yaml`). En `dev` se reiniciaron `deploy/api`, `deploy/worker` y el Pod `postgres-0` (2026-11-08) y los recuentos de `GET /v1/stats` quedaron idénticos.
 
 ## Evidencia
 
-Pendiente de enlazar. Guardar las capturas en [evidencias/](../evidencias) con el prefijo `COM-03-`.
+- [COM-03-stats-antes.txt](../evidencias/COM-03-stats-antes.txt): correo 53 (50 `delivered`, 3 `failed`) e interno 54 (`delivered`).
+- [COM-03-stats-despues.txt](../evidencias/COM-03-stats-despues.txt): los mismos recuentos tras reiniciar API, worker y PostgreSQL.

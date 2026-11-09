@@ -1,0 +1,35 @@
+OK    destinatarios inválidos terminan failed
+OK    c9abed24: error permanente sin reintentos
+OK    0a38c44a: error permanente sin reintentos
+OK    f83bba1f: error permanente sin reintentos
+OK    el canal interno sigue entregando
+OK    se aceptan aunque el correo falle
+OK    el canal interno entrega todo
+OK    los correos llegan a un estado final
+OK    hubo reintentos (más de un intento)
+OK    ninguno supera 3 intentos
+OK    02c678fe: failed tras agotar los 3 intentos
+OK    02c678fe: todos sus intentos fueron errores pasajeros
+OK    da7d3e4e: failed tras agotar los 3 intentos
+OK    da7d3e4e: todos sus intentos fueron errores pasajeros
+OK    cb265d44: failed tras agotar los 3 intentos
+OK    cb265d44: todos sus intentos fueron errores pasajeros
+OK    580e710c: failed tras agotar los 3 intentos
+OK    580e710c: todos sus intentos fueron errores pasajeros
+OK    7996be84: failed tras agotar los 3 intentos
+OK    7996be84: todos sus intentos fueron errores pasajeros
+OK    a52dc3ef: failed tras agotar los 3 intentos
+OK    a52dc3ef: todos sus intentos fueron errores pasajeros
+OK    bcbbc568: failed tras agotar los 3 intentos
+OK    bcbbc568: todos sus intentos fueron errores pasajeros
+OK    469f01b5: failed tras agotar los 3 intentos
+OK    469f01b5: todos sus intentos fueron errores pasajeros
+OK    d4c21b0c: failed tras agotar los 3 intentos
+OK    d4c21b0c: todos sus intentos fueron errores pasajeros
+OK    0e1b60f5: failed tras agotar los 3 intentos
+OK    0e1b60f5: todos sus intentos fueron errores pasajeros
+trabajos sin terminar al reiniciar: 60
+OK    hay trabajos pendientes al momento del reinicio
+OK    worker reiniciado
+OK    las 60 notificaciones siguen consultables
+OK    todas se entregan tras el reinicio
