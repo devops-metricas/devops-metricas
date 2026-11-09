@@ -3,7 +3,7 @@
 Un documento por requisito, con su ID al inicio del nombre. Las capturas están en
 [evidencias/](evidencias). Este índice se actualiza al cerrar cada requisito.
 
-**Resumen:** 18 cubiertos, 2 parciales, 8 pendientes.
+**Resumen:** 19 cubiertos, 2 parciales, 7 pendientes.
 
 | Requisito | Documento | Responsable | Estado |
 |---|---|---|---|
@@ -17,7 +17,7 @@ Un documento por requisito, con su ID al inicio del nombre. Las capturas están 
 | DEV-02 | [DEV-02-imagenes-de-contenedor.md](DEV/DEV-02-imagenes-de-contenedor.md) | Melissa | Cubierto |
 | DEV-03 | [DEV-03-integracion-continua.md](DEV/DEV-03-integracion-continua.md) | Diego | Cubierto |
 | DEV-04 | [DEV-04-publicacion-de-imagenes.md](DEV/DEV-04-publicacion-de-imagenes.md) | Diego | Cubierto |
-| DEV-05 | [DEV-05-entrega-controlada.md](DEV/DEV-05-entrega-controlada.md) | Diego | Pendiente |
+| DEV-05 | [DEV-05-entrega-controlada.md](DEV/DEV-05-entrega-controlada.md) | Diego | Cubierto |
 | DEV-06 | [DEV-06-terraform.md](DEV/DEV-06-terraform.md) | Melissa | Cubierto |
 | DEV-07 | [DEV-07-estado-remoto.md](DEV/DEV-07-estado-remoto.md) | Melissa | Cubierto |
 | DEV-08 | [DEV-08-validacion-de-terraform-en-ci.md](DEV/DEV-08-validacion-de-terraform-en-ci.md) | Diego | Cubierto |
