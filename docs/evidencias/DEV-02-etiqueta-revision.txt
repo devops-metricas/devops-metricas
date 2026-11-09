@@ -1,0 +1,11 @@
+# 2026-11-08. Consulta anónima al registro (el paquete es público); no requiere Docker.
+# Imagen: ghcr.io/devops-metricas/notifier:e0a768b1ec194a071e93bb285eb68c25c78aa044
+# Índice -> manifiesto linux/amd64: sha256:ed8ded25bdd4093f34af7ee4027e1814de882256c1e187548b7faa554f15da1d
+# Etiquetas OCI de la configuración de la imagen:
+{
+  "org.opencontainers.image.revision": "e0a768b1ec194a071e93bb285eb68c25c78aa044",
+  "org.opencontainers.image.source": "https://github.com/devops-metricas/devops-metricas",
+  "org.opencontainers.image.title": "notifier"
+}
+created: 2026-11-08T23:34:16.78247048Z
+# La etiqueta de la imagen, la etiqueta OCI "revision" y el commit de main coinciden (e0a768b).
