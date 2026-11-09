@@ -59,8 +59,28 @@ encendida de más, cargos no previstos).
 
 ## 4. Dimensionamiento de la VM
 
-*Pendiente: justificar `Standard_B2as_v2` (2 vCPU, 8 GB) con los requests definidos en los manifiestos
-y el consumo observado con la aplicación y la pila de métricas desplegadas.*
+### Requests y límites definidos (`k8s/base/`)
+
+Una réplica de cada componente por ambiente (`replicas: 1` en todos los manifiestos).
+
+| Componente | CPU (request) | Memoria (request) | Memoria (límite) |
+|---|---|---|---|
+| api | 50m | 96 Mi | 256 Mi |
+| worker | 50m | 96 Mi | 256 Mi |
+| postgres | 100m | 256 Mi | 512 Mi |
+| mailpit | 25m | 32 Mi | 128 Mi |
+| **Total por ambiente** | **225m** | **480 Mi** | **1152 Mi** |
+| **Dev + prod** | **450m** | **960 Mi** | **2304 Mi** |
+
+Los manifiestos no fijan límite de CPU, solo de memoria. Los requests de las dos aplicaciones usan
+unas 0,45 vCPU y menos de 1 GiB de los 2 vCPU y 8 GiB de `Standard_B2as_v2`; incluso sumando todos los
+límites de memoria (2,25 GiB) queda margen para el sistema, K3s (CoreDNS, Traefik, metrics-server,
+provisionador de almacenamiento) y la pila de métricas que pide el bloque MET. Una VM de 4 GB (por
+ejemplo `Standard_B2s`) no dejaría margen con Prometheus y Grafana en el mismo nodo, y una de 16 GB
+duplicaría el costo de cómputo sin necesidad.
+
+*Pendiente: confirmar con `kubectl top nodes` y `kubectl top pods -A` (metrics-server ya corre en el
+clúster) con la aplicación bajo carga y la pila de métricas desplegada, y anotar aquí el consumo real.*
 
 K3s exige como mínimo 2 vCPU y 2 GB para un nodo servidor. Se eligieron 8 GB porque en el mismo nodo
 deben convivir dev, prod, PostgreSQL, Mailpit y la observabilidad. Se confirma o se ajusta con los
