@@ -1,11 +1,11 @@
 # DEV-02: Distribuir los componentes ejecutables mediante imágenes de contenedor.
 
-> **Parcial. Completa Melissa.**
+> **Cubierto.**
 
 | | |
 |---|---|
 | **Responsable** | Melissa |
-| **Estado** | Parcial |
+| **Estado** | Cubierto |
 | **Evidencia mínima que se revisa** | Dockerfiles o equivalentes, imágenes versionadas y trazables. |
 
 ## Qué hay y qué falta
@@ -21,14 +21,10 @@ publica en `ghcr.io/devops-metricas/notifier` con la etiqueta igual al SHA compl
 | ¿Qué código contiene esa imagen? | `docker inspect` o la página del paquete: etiqueta `org.opencontainers.image.revision` |
 | ¿Cómo se vuelve a una versión previa? | `Entrega` manual con el SHA anterior (DEV-12) |
 
-Falta enlazar las capturas (abajo) para dar el requisito por cubierto.
-
 ## Evidencia
 
-Pendiente de capturar y enlazar en [evidencias/](../evidencias) con el prefijo `DEV-02-`:
-
-1. Página del paquete en GitHub con la etiqueta del SHA.
-2. `docker inspect` (o `crane config`) de esa imagen mostrando `org.opencontainers.image.revision`.
-3. ~~Misma etiqueta en el Deployment de `dev`~~ Hecho: [DEV-09-k3s-workloads.txt](../evidencias/DEV-09-k3s-workloads.txt)
-   muestra `api` y `worker` con `ghcr.io/devops-metricas/notifier:e0a768b1ec194a071e93bb285eb68c25c78aa044`,
-   el HEAD de `main` en ese momento.
+- [DEV-02-etiqueta-revision.txt](../evidencias/DEV-02-etiqueta-revision.txt): consulta al registro GHCR
+  (anónima, el paquete es público) de la imagen `…/notifier:e0a768b…`; su etiqueta OCI
+  `org.opencontainers.image.revision` es el mismo SHA del commit.
+- [DEV-09-k3s-workloads.txt](../evidencias/DEV-09-k3s-workloads.txt): los Deployments `api` y `worker` de
+  `dev` usan esa misma imagen, el HEAD de `main` en ese momento.

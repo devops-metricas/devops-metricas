@@ -3,7 +3,7 @@
 Un documento por requisito, con su ID al inicio del nombre. Las capturas están en
 [evidencias/](evidencias). Este índice se actualiza al cerrar cada requisito.
 
-**Resumen:** 15 cubiertos, 3 parciales, 10 pendientes.
+**Resumen:** 17 cubiertos, 2 parciales, 9 pendientes.
 
 | Requisito | Documento | Responsable | Estado |
 |---|---|---|---|
@@ -14,7 +14,7 @@ Un documento por requisito, con su ID al inicio del nombre. Las capturas están 
 | COM-05 | [COM-05-control-de-acceso.md](COM/COM-05-control-de-acceso.md) | Melissa | Cubierto |
 | COM-06 | [COM-06-decisiones.md](COM/COM-06-decisiones.md) | Melissa | Cubierto |
 | DEV-01 | [DEV-01-git-y-pull-requests.md](DEV/DEV-01-git-y-pull-requests.md) | Diego | Cubierto |
-| DEV-02 | [DEV-02-imagenes-de-contenedor.md](DEV/DEV-02-imagenes-de-contenedor.md) | Melissa | Parcial |
+| DEV-02 | [DEV-02-imagenes-de-contenedor.md](DEV/DEV-02-imagenes-de-contenedor.md) | Melissa | Cubierto |
 | DEV-03 | [DEV-03-integracion-continua.md](DEV/DEV-03-integracion-continua.md) | Diego | Cubierto |
 | DEV-04 | [DEV-04-publicacion-de-imagenes.md](DEV/DEV-04-publicacion-de-imagenes.md) | Diego | Cubierto |
 | DEV-05 | [DEV-05-entrega-controlada.md](DEV/DEV-05-entrega-controlada.md) | Diego | Pendiente |
@@ -24,7 +24,7 @@ Un documento por requisito, con su ID al inicio del nombre. Las capturas están 
 | DEV-09 | [DEV-09-k3s.md](DEV/DEV-09-k3s.md) | Melissa | Cubierto |
 | DEV-10 | [DEV-10-configuracion-y-secretos.md](DEV/DEV-10-configuracion-y-secretos.md) | Diego | Pendiente |
 | DEV-11 | [DEV-11-probes-y-recursos.md](DEV/DEV-11-probes-y-recursos.md) | Diego | Cubierto |
-| DEV-12 | [DEV-12-rollback.md](DEV/DEV-12-rollback.md) | Diego | Pendiente |
+| DEV-12 | [DEV-12-rollback.md](DEV/DEV-12-rollback.md) | Diego | Cubierto |
 | DEV-13 | [DEV-13-reconstruccion.md](DEV/DEV-13-reconstruccion.md) | Melissa | Cubierto |
 | DEV-14 | [DEV-14-costos.md](DEV/DEV-14-costos.md) | Melissa | Parcial |
 | MET-01 | [MET-01-catalogo-de-indicadores.md](MET/MET-01-catalogo-de-indicadores.md) | Camila | Pendiente |
