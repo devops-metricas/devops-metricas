@@ -1,0 +1,23 @@
+# 2026-11-08, vía `az vm run-command` en vm-notifier (la API 6443 no se expone)
+$ k3s kubectl get nodes -o wide
+NAME          STATUS   ROLES                  AGE     VERSION        INTERNAL-IP   EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION     CONTAINER-RUNTIME
+vm-notifier   Ready    control-plane,master   4d16h   v1.31.4+k3s1   10.10.1.4     <none>        Ubuntu 24.04.5 LTS   7.0.0-1017-azure   containerd://1.7.23-k3s2
+
+$ k3s kubectl get pods -A
+NAMESPACE      NAME                                      READY   STATUS      RESTARTS      AGE
+kube-system    coredns-ccb96694c-t79w6                   1/1     Running     2 (13m ago)   4d16h
+kube-system    helm-install-traefik-crd-r67pk            0/1     Completed   0             4d16h
+kube-system    helm-install-traefik-f2rwd                0/1     Completed   0             4d16h
+kube-system    local-path-provisioner-5cf85fd84d-7pbbf   1/1     Running     2 (13m ago)   4d16h
+kube-system    metrics-server-5985cbc9d7-82bxq           1/1     Running     2 (13m ago)   4d16h
+kube-system    svclb-traefik-e653f05b-blc6s              2/2     Running     4 (13m ago)   4d16h
+kube-system    traefik-78d6c7f686-lk5td                  1/1     Running     2 (13m ago)   4d16h
+notifier-dev   api-867887c777-vh4wx                      1/1     Running     0             6m29s
+notifier-dev   mailpit-5f5b644565-znbjj                  1/1     Running     1 (13m ago)   144m
+notifier-dev   postgres-0                                1/1     Running     0             6m27s
+notifier-dev   worker-c4b4d69c4-qtg4s                    1/1     Running     0             112s
+
+$ k3s kubectl -n notifier-dev get deploy api worker -o wide
+NAME     READY   UP-TO-DATE   AVAILABLE   AGE    CONTAINERS   IMAGES                                                                      SELECTOR
+api      1/1     1            1           144m   api          ghcr.io/devops-metricas/notifier:e0a768b1ec194a071e93bb285eb68c25c78aa044   app=api
+worker   1/1     1            1           144m   worker       ghcr.io/devops-metricas/notifier:e0a768b1ec194a071e93bb285eb68c25c78aa044   app=worker

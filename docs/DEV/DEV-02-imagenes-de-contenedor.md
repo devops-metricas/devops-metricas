@@ -29,5 +29,6 @@ Pendiente de capturar y enlazar en [evidencias/](../evidencias) con el prefijo `
 
 1. Página del paquete en GitHub con la etiqueta del SHA.
 2. `docker inspect` (o `crane config`) de esa imagen mostrando `org.opencontainers.image.revision`.
-3. Misma etiqueta en el Deployment de `dev` (`kubectl get deploy api -o jsonpath` dentro de la VM, en la
-   sesión descrita en [interno/sesion-vm.md](../interno/sesion-vm.md)).
+3. ~~Misma etiqueta en el Deployment de `dev`~~ Hecho: [DEV-09-k3s-workloads.txt](../evidencias/DEV-09-k3s-workloads.txt)
+   muestra `api` y `worker` con `ghcr.io/devops-metricas/notifier:e0a768b1ec194a071e93bb285eb68c25c78aa044`,
+   el HEAD de `main` en ese momento.
