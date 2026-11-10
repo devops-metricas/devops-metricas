@@ -17,6 +17,8 @@ configMapGenerator:
       - NOTIFIER_RETRY_BACKOFF_SECONDS=5
       - NOTIFIER_EMAIL_FAULT_RATE=0
       - NOTIFIER_EMAIL_FAULT_KIND=503
+      # Trazas (MET-04): sin esta variable la app no exporta (ver observability.setup_tracing).
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector.observability.svc.cluster.local:4318
 
 # La imagen se fija en los overlays (nombre y etiqueta = sha del commit).
 images:
