@@ -1,0 +1,59 @@
+name: Monitoreo
+
+# Despliega Prometheus y Grafana y comprueba que scrapean. Manual, solo desde main.
+# Se autentica en Azure con OIDC (identidad sp-notifier-deploy) y aplica dentro de la VM
+# con `az vm run-command`. Mismo grupo de concurrencia que Entrega para no solapar run-commands.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # OIDC hacia Azure: sin contraseñas guardadas
+
+concurrency:
+  group: entrega # un run-command a la vez; uno nuevo espera, no cancela a medias
+  cancel-in-progress: false
+
+env:
+  RESOURCE_GROUP: rg-notifier
+  VM_NAME: vm-notifier
+  # DNS público (lo fija Terraform: etiqueta DNS + región). La región es la de variables.tf.
+  FQDN: ${{ vars.TF_DNS_LABEL }}.northcentralus.cloudapp.azure.com
+
+jobs:
+  monitoreo:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: dev
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_DEPLOY_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      # Aquí la VM apagada siempre es un error: no hay un merge automático que omitir.
+      - name: Comprobar que la VM está encendida
+        run: |
+          estado=$(az vm get-instance-view -g "$RESOURCE_GROUP" -n "$VM_NAME" \
+            --query "instanceView.statuses[?starts_with(code,'PowerState/')].code | [0]" -o tsv)
+          echo "Estado de la VM: ${estado}"
+          if [ "$estado" != "PowerState/running" ]; then
+            echo "::error::La VM no está encendida (${estado}). Enciéndela con Infra ops y repite."
+            exit 1
+          fi
+      - name: Desplegar monitoreo
+        env:
+          GRAFANA_ADMIN_PASSWORD: ${{ secrets.GRAFANA_ADMIN_PASSWORD }}
+        run: ./scripts/desplegar-monitoreo.sh
+      - name: Verificar monitoreo
+        run: ./scripts/verificar-monitoreo.sh
+      - name: Resumen
+        run: |
+          {
+            echo '### Monitoreo desplegado'
+            echo "- Workflow: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            echo "- Grafana: https://${FQDN}/grafana"
+          } >> "$GITHUB_STEP_SUMMARY"
