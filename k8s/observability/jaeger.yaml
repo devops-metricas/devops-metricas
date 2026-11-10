@@ -1,0 +1,59 @@
+# Backend de trazas: Jaeger all-in-one con almacenamiento en memoria.
+# Decisión de costo: no hay disco ni servicio administrado (cero cargo extra en Azure). Límite
+# aceptado: las trazas se pierden si el Pod se reinicia; la evidencia se exporta a docs/evidencias/.
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger
+spec:
+  selector: {app: jaeger}
+  ports:
+    - {name: ui, port: 16686, targetPort: ui}
+    - {name: otlp-grpc, port: 4317, targetPort: otlp-grpc}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jaeger
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: jaeger}
+  template:
+    metadata:
+      labels: {app: jaeger}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: jaeger
+          image: jaegertracing/all-in-one:1.62.0
+          env:
+            - {name: COLLECTOR_OTLP_ENABLED, value: "true"}
+            # Tope de trazas en memoria: acota el consumo (ver resources).
+            - {name: MEMORY_MAX_TRACES, value: "20000"}
+          ports:
+            - {name: ui, containerPort: 16686}
+            - {name: otlp-grpc, containerPort: 4317}
+            - {name: admin, containerPort: 14269}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          volumeMounts:
+            - {name: tmp, mountPath: /tmp}
+          readinessProbe:
+            httpGet: {path: /, port: admin}
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /, port: admin}
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          resources:
+            requests: {cpu: 50m, memory: 128Mi}
+            limits: {memory: 384Mi}
+      volumes:
+        - name: tmp
+          emptyDir: {}
