@@ -15,6 +15,7 @@ Opciones comunes:
 Advertencia: la carga local en Windows no representa a la VM de Azure. Usar los mismos
 parámetros en ambos entornos y anotar en qué entorno se corrió. El canal email local va a Mailpit.
 
+El tiempo final se mide con created_at y delivered_at/updated_at del servidor, no con el reloj del script.
 Termina con código 1 si una comprobación falla. Que la cola se acumule no es una falla.
 Si falta API_KEY, imprime este uso y sale con código 2.
 """
@@ -205,26 +206,54 @@ def esperar_muestra(
         return 0, 0, 0, None, None
     por_id = {envio.nid: envio for envio in muestra if envio.nid}
     estados: dict[str, str] = {}
-    t_final: dict[str, float] = {}
+    tiempos: list[float] = []
     limite = time.monotonic() + esperar
 
-    def leer(nid: str) -> tuple[str, str | None]:
+    def instante(texto: object) -> datetime | None:
+        if not isinstance(texto, str):
+            return None
+        if texto.endswith("Z"):
+            texto = texto[:-1] + "+00:00"
+        try:
+            return datetime.fromisoformat(texto)
+        except ValueError:
+            return None
+
+    def segundos_servidor(detalle: dict, estado: str) -> float | None:
+        # delivered cierra en delivered_at; failed no tiene esa marca y cierra en updated_at.
+        fin = detalle.get("delivered_at" if estado == "delivered" else "updated_at")
+        inicio = instante(detalle.get("created_at"))
+        cierre = instante(fin)
+        if inicio is None or cierre is None:
+            return None
+        try:
+            return (cierre - inicio).total_seconds()
+        except TypeError:
+            return None
+
+    def leer(nid: str) -> tuple[str, str | None, dict | None]:
         try:
             respuesta = client.get(f"/v1/notifications/{nid}")
         except httpx.HTTPError:
-            return nid, None
+            return nid, None, None
         if respuesta.status_code != 200:
-            return nid, None
+            return nid, None, None
         try:
-            return nid, respuesta.json().get("status")
+            detalle = respuesta.json()
         except ValueError:
-            return nid, None
+            return nid, None, None
+        if not isinstance(detalle, dict):
+            return nid, None, None
+        estado = detalle.get("status")
+        return nid, estado if isinstance(estado, str) else None, detalle
 
     while por_id:
         with ThreadPoolExecutor(max_workers=min(32, len(por_id))) as pool:
-            for nid, estado in pool.map(leer, list(por_id)):
-                if estado in TERMINAL:
-                    t_final[nid] = time.monotonic()
+            for nid, estado, detalle in pool.map(leer, list(por_id)):
+                if estado in TERMINAL and detalle is not None:
+                    segundos = segundos_servidor(detalle, estado)
+                    if segundos is not None:
+                        tiempos.append(segundos)
                     estados[nid] = estado
                     por_id.pop(nid, None)
         if not por_id or time.monotonic() >= limite:
@@ -234,13 +263,11 @@ def esperar_muestra(
     delivered = sum(estado == "delivered" for estado in estados.values())
     failed = sum(estado == "failed" for estado in estados.values())
     pendientes = len(muestra) - delivered - failed
-    por_nid = {envio.nid: envio for envio in muestra}
-    tiempos = [momento - por_nid[nid].t_envio for nid, momento in t_final.items()]
     mediana = percentil(tiempos, 0.50)
     p95 = percentil(tiempos, 0.95)
     print(
         f"muestra {len(muestra)}: delivered {delivered}, failed {failed}, "
-        f"pendientes {pendientes}; tiempo final mediana {fmt(mediana, 2)} s, "
+        f"pendientes {pendientes}; tiempo final (servidor) mediana {fmt(mediana, 2)} s, "
         f"p95 {fmt(p95, 2)} s"
     )
     if pendientes:
@@ -278,7 +305,8 @@ def ejecutar_nivel(
             futuros.append(pool.submit(enviar, client, corrida, rate, indice, canal, objetivo))
         envios = [futuro.result() for futuro in futuros]
     t_ultimo = max(envio.t_envio for envio in envios)
-    tasa_real = n / max(t_ultimo - t0, 1e-9)
+    tramos = (n - 1) if n > 1 else n
+    tasa_real = tramos / max(t_ultimo - t0, 1e-9)
     latencias = [envio.latencia_ms for envio in envios]
     n_202 = sum(envio.codigo == 202 for envio in envios)
     n_4xx = sum(envio.codigo is not None and 400 <= envio.codigo < 500 for envio in envios)
