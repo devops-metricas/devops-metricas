@@ -552,7 +552,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "notifier_oldest_pending_age_seconds",
+          "expr": "max(notifier_oldest_pending_age_seconds)",
           "legendFormat": "pendiente mas viejo",
           "range": true,
           "refId": "A"
