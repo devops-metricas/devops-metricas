@@ -1,0 +1,4 @@
+rate objetivo,tasa real,enviadas,202,errores,p50 ms,p95 ms,delivered,failed,pendientes,tiempo final p95 s
+5,5.00,300,300,0,164.8,226.9,100,0,0,0.96
+15,15.00,900,900,0,132.4,201.6,100,0,0,0.93
+30,29.99,1800,1800,0,116.2,157.3,100,0,0,0.95

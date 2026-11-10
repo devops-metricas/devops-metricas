@@ -1,11 +1,11 @@
 # MET-05: Construir dashboards que respondan preguntas operativas concretas.
 
-> **Parcial.**
+> **Cubierto.**
 
 | | |
 |---|---|
 | **Responsable** | Rene |
-| **Estado** | Parcial |
+| **Estado** | Cubierto |
 | **Evidencia mínima que se revisa** | Paneles interpretables, con unidades y ventanas temporales. |
 
 ## Qué hay y qué falta
@@ -26,7 +26,9 @@ unidad y la ventana en el título.
 | 7. API: latencia p95 y errores 5xx | ¿Cuál es el p95 de la API y a qué ritmo hay errores 5xx? | `histogram_quantile(0.95, sum by (le) (rate(http_request_duration_highr_seconds_bucket{job="notifier-api"}[5m])))` y `sum(rate(http_requests_total{job="notifier-api",status="5xx"}[5m]))` | s y reqps | 5 m |
 | 8. Capacidad: CPU y memoria por componente | ¿Cuánta CPU y memoria residente usa cada componente? | `sum by (job) (rate(process_cpu_seconds_total{job=~"notifier-.*"}[5m]))` y `sum by (job) (process_resident_memory_bytes{job=~"notifier-.*"})` | percentunit y bytes | 5 m en la CPU; la memoria es el valor instantáneo |
 
-**Falta** el panel 8, que en Windows sale vacío, y falta desplegar Grafana en K3s para validarlo.
+En Windows el panel 8 sale vacío porque `process_*` solo existe en Linux. En K3s ya tiene datos; el
+detalle está en la evidencia del 10/11/2026. Grafana se publica en `https://<FQDN>/grafana`, con
+FQDN = `<TF_DNS_LABEL>.northcentralus.cloudapp.azure.com`.
 
 ## Evidencia
 
@@ -45,6 +47,51 @@ El p95 de la API (la serie visible es «p95 latencia») se mueve entre unos 50 m
 de capacidad muestra **No data**.
 
 ![Dashboard, paneles inferiores](../evidencias/MET-05-dashboard-inferior.png)
+
+### Evidencia en K3s (10/11/2026)
+
+Horas locales de El Salvador (UTC−6). El dashboard `notifier-ops` se miró con ventana de 30 min y
+refresco de 10 s, en `https://<FQDN>/grafana`.
+
+**Observado, en reposo.** Los paneles 1 a 4 están en No data, sin tráfico. En la mitad inferior el eje
+va de 15:30 a 15:55: el backlog está en 0, la antigüedad en 0 y el p95 de la API vacío. El panel de
+capacidad tiene datos desde las 15:54, cuando Prometheus empezó a leer.
+
+![Dashboard en K3s, reposo, paneles superiores](../evidencias/MET-05-k3s-dashboard-reposo-arriba.png)
+
+![Dashboard en K3s, reposo, paneles inferiores](../evidencias/MET-05-k3s-dashboard-reposo-abajo.png)
+
+**Observado, durante la carga** (la misma de [MET-03](MET-03-metricas-de-aplicacion.md), canal
+`internal`). La tasa de éxito está en 100 %. Los intentos de entrega son todos `success` y del orden de
+la tasa enviada. El backlog llega como máximo a unos 5, 18 y 30 pendientes en los tres niveles y vuelve
+siempre a 0. La antigüedad del pendiente más viejo llega como máximo a unos 1 s. El p95 de la API se
+mueve entre unos 20 y 55 ms; el valor de 55 ms es de la prueba corta previa. El p95 extremo a extremo
+queda plano entre unos 945 y 960 ms. En el panel de capacidad, la CPU de `notifier-api` está por debajo
+del 5 % y la de `notifier-worker` cerca del 2 %; la memoria alrededor de 144 MiB. Ese panel usa
+`process_cpu_seconds_total` y `process_resident_memory_bytes` agrupadas por job, así que suma dev y prod.
+
+![Dashboard en K3s durante 5 req/s](../evidencias/MET-05-k3s-dashboard-carga-5rps.png)
+
+![Dashboard en K3s durante 15 req/s](../evidencias/MET-05-k3s-dashboard-carga-15rps.png)
+
+![Dashboard en K3s durante 30 req/s](../evidencias/MET-05-k3s-dashboard-carga-30rps.png)
+
+**Interpretación.** Hasta 30 req/s no hay saturación: el backlog se vacía en cada ciclo de 1 s del worker
+y la latencia de la API no crece con la carga. El máximo de pendientes (unos 5, 18 y 30) es del orden de
+la llegada por segundo, coherente con esa consulta de la cola cada 1 s. El p95 extremo a extremo de unos
+0,95 s es real, no un artefacto del histograma: `scripts/carga.py` mide 0,93 a 0,96 s con `created_at` y
+`delivered_at` del servidor, y encaja con un reparto uniforme de la espera entre 0 y 1 s del ciclo del
+worker. Con esta carga, `NotifierQueueDelayHigh` (más de 30 s) y `NotifierDeliveryFailureRatioHigh` (más
+del 20 %) no podían cumplirse según los paneles: la cola máxima ronda 1 s y el éxito está en 100 %. Eso
+se infiere de estos paneles, no de una captura de la página de alertas durante la carga.
+
+**Hipótesis.** Esta subsección no agrega una hipótesis propia. La de la evidencia local, sobre los 7 s
+del canal `internal` durante la falla del correo, sigue sin verificar y no usa estas capturas.
+
+**Limitaciones.** Todo el tráfico fue por el canal `internal`; el correo no se probó en la VM. La carga
+salió de un solo PC por internet. No se encontró el punto de saturación. El dashboard no tiene variable
+de entorno y agrupa dev y prod; prod no tuvo tráfico. La latencia del cliente de la tabla de MET-03
+incluye la red. El consumo de los pods del namespace `monitoring` no se midió en esta sesión.
 
 ## Interpretación
 

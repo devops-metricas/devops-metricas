@@ -31,8 +31,9 @@ Otros falsos positivos de la regla de entregas: la alerta se cierra sola si el t
 mínimo, y un fallo transitorio que luego se reintenta con éxito cuenta como intento fallido. La regla
 mira intentos, no el estado final de la notificación.
 
-**Falta** repetir la demostración de recuperación sosteniendo tráfico mientras se corrige la causa, y
-demostrar el disparo de `NotifierQueueDelayHigh`.
+**Falta** demostrar en K3s el disparo y la recuperación de `NotifierDeliveryFailureRatioHigh` con tráfico
+sostenido mientras se corrige la causa, y el disparo de `NotifierQueueDelayHigh`. Eso se hará con el
+incidente controlado de [MET-07](MET-07-incidente-controlado.md).
 
 ## Evidencia
 
@@ -88,6 +89,26 @@ Corrida anterior, leída de la misma serie `ALERTS`:
 | 23:10:45 | Pending |
 | ~23:11:45 | Firing |
 | ~23:13:15 | Fin de firing |
+
+### Verificación en K3s (10/11/2026)
+
+Horas locales de El Salvador (UTC−6). En el mismo run del workflow Monitoreo #1, la verificación terminó
+en `VERIFICACION_OK`.
+
+**Observado.** `NotifierDeliveryFailureRatioHigh` y `NotifierQueueDelayHigh` estaban cargadas y las dos
+inactive. La captura es la de la verificación, anterior a la carga de las 16:16; no es la página de
+alertas durante la carga.
+
+![Reglas cargadas e inactivas en la verificación](../evidencias/MET-03-verificacion-monitoreo-vm.png)
+
+**Interpretación.** Con la carga de [MET-05](MET-05-dashboards.md) esas reglas no podían cumplirse según
+los paneles: la antigüedad del pendiente más viejo ronda 1 s, por debajo de los 30 s de
+`NotifierQueueDelayHigh`, y el éxito de entrega está en 100 %, por debajo del 20 % de fallos de
+`NotifierDeliveryFailureRatioHigh`. Es una inferencia de los paneles, no una captura de alertas durante
+la carga.
+
+**Hipótesis.** No hay una hipótesis nueva. Sigue sin demostrarse, en K3s, el disparo y la recuperación
+con tráfico sostenido, y el disparo de `NotifierQueueDelayHigh`. Queda para MET-07.
 
 ## Interpretación
 
