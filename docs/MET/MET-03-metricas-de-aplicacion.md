@@ -89,8 +89,8 @@ la muestra 0 `failed` y 0 pendientes.
 
 | Nivel | Tasa real | Enviadas | 202 | Errores | p50 cliente | p95 cliente | Muestra | Tiempo final p95 |
 |---|---|---|---|---|---|---|---|---|
-| 5 req/s | no consta | 300 | 300 | 0 | 164,8 ms | 226,9 ms | 100 delivered | 0,96 s |
-| 15 req/s | no consta | 900 | 900 | 0 | 132,4 ms | 201,6 ms | 100 delivered | 0,93 s |
+| 5 req/s | 5,00 | 300 | 300 | 0 | 164,8 ms | 226,9 ms | 100 delivered | 0,96 s |
+| 15 req/s | 15,00 | 900 | 900 | 0 | 132,4 ms | 201,6 ms | 100 delivered | 0,93 s |
 | 30 req/s | 29,99 | 1800 | 1800 | 0 | 116,2 ms | 157,3 ms | 100 delivered | 0,95 s |
 
 ![Tabla de la carga en la VM](../evidencias/MET-03-carga-vm-tabla.png)
