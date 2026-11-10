@@ -1,0 +1,25 @@
+# Exposición pública de Grafana por HTTPS, en el subpath /grafana del nombre DNS.
+# REPLACE_FQDN lo sustituye el despliegue por <TF_DNS_LABEL>.northcentralus.cloudapp.azure.com
+# (nombre que fija Terraform: no cambia al reconstruir). El certificado lo emite Let's Encrypt
+# mediante el resolver "letsencrypt" de Traefik (ver k8s/platform/traefik-acme.yaml).
+# Sin middleware de strip: Grafana ya sirve desde /grafana (GF_SERVER_SERVE_FROM_SUB_PATH).
+# Prometheus no se publica.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana
+  labels: {app: grafana}
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls.certresolver: letsencrypt
+spec:
+  rules:
+    - host: REPLACE_FQDN
+      http:
+        paths:
+          - path: /grafana
+            pathType: Prefix
+            backend:
+              service: {name: grafana, port: {name: http}}
+  tls:
+    - hosts: [REPLACE_FQDN]
