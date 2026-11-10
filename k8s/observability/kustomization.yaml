@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Trazas (MET-04): colector OpenTelemetry + Jaeger, compartidos por dev y prod.
+# Los ambientes se distinguen por el atributo deployment.environment de cada traza.
+# Nada de esto se expone a Internet: solo Services ClusterIP (ver docs/MET/MET-04).
+namespace: observability
+resources:
+  - namespace.yaml
+  - otel-collector.yaml
+  - jaeger.yaml

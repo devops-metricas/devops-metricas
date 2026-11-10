@@ -1,0 +1,27 @@
+# MET-04: traza 8dc551eae5953e8144911e3f8d19b48e (ENTORNO LOCAL: app -> colector 0.114.0 -> Jaeger 1.62.0)
+# Misma notificación que MET-02-correlacion-local.txt. Backoff local 1 s (en el clúster es 5 s y 10 s).
+# inicio relativo | duración | servicio | operación | intento | error
+      0.0 ms  +    95.6 ms  notifier-api     POST /v1/notifications              
+      8.5 ms  +     0.0 ms  notifier-api     POST /v1/notifications http receive  
+     13.0 ms  +     1.1 ms  notifier-api     SELECT                              
+     14.6 ms  +     1.2 ms  notifier-api     INSERT                              
+     15.9 ms  +     0.4 ms  notifier-api     INSERT                              
+     16.4 ms  +     0.2 ms  notifier-api     INSERT                              
+     95.2 ms  +     0.0 ms  notifier-api     POST /v1/notifications http send    
+     95.5 ms  +     0.0 ms  notifier-api     POST /v1/notifications http send    
+     95.6 ms  +     0.0 ms  notifier-api     POST /v1/notifications http send    
+    241.9 ms  +     3.4 ms  notifier-worker  notification.process               1 
+    241.9 ms  +     1.3 ms  notifier-worker  email.send                          ERROR
+    243.4 ms  +     0.8 ms  notifier-worker  INSERT                              
+    244.2 ms  +     0.3 ms  notifier-worker  UPDATE                              
+    244.5 ms  +     0.3 ms  notifier-worker  INSERT                              
+   1270.3 ms  +     1.9 ms  notifier-worker  notification.process               2 
+   1270.4 ms  +     0.5 ms  notifier-worker  email.send                          ERROR
+   1271.0 ms  +     0.3 ms  notifier-worker  INSERT                              
+   1271.4 ms  +     0.3 ms  notifier-worker  UPDATE                              
+   1271.7 ms  +     0.1 ms  notifier-worker  INSERT                              
+   3291.9 ms  +     4.6 ms  notifier-worker  notification.process               3 
+   3291.9 ms  +     3.0 ms  notifier-worker  email.send                          
+   3295.1 ms  +     0.3 ms  notifier-worker  INSERT                              
+   3295.5 ms  +     0.3 ms  notifier-worker  UPDATE                              
+   3295.9 ms  +     0.1 ms  notifier-worker  INSERT                              

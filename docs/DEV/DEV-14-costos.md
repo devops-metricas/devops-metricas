@@ -71,6 +71,12 @@ Una réplica de cada componente por ambiente (`replicas: 1` en todos los manifie
 | mailpit | 25m | 32 Mi | 128 Mi |
 | **Total por ambiente** | **225m** | **480 Mi** | **1152 Mi** |
 | **Dev + prod** | **450m** | **960 Mi** | **2304 Mi** |
+| otel-collector (`observability`, compartido) | 25m | 64 Mi | 256 Mi |
+| jaeger (`observability`, compartido) | 50m | 128 Mi | 384 Mi |
+| **Aplicación + trazas** | **525m** | **1152 Mi** | **2944 Mi** |
+
+Las trazas (MET-04) no agregan recursos de Azure: corren en la misma VM, en memoria y sin disco. Los
+requests de Prometheus y Grafana (MET-03, Rene) se suman aquí cuando estén definidos.
 
 Los manifiestos no fijan límite de CPU, solo de memoria. Los requests de las dos aplicaciones usan
 unas 0,45 vCPU y menos de 1 GiB de los 2 vCPU y 8 GiB de `Standard_B2as_v2`; incluso sumando todos los
