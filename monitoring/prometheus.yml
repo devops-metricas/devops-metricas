@@ -1,0 +1,21 @@
+# Prometheus local (desarrollo). Lee las métricas de la API y del worker que corren en la máquina.
+# host.docker.internal es la máquina anfitriona vista desde el contenedor (Docker Desktop).
+global:
+  scrape_interval: 15s      # cada cuánto se leen las métricas
+  evaluation_interval: 15s  # cada cuánto se evalúan las reglas de alerta
+
+rule_files:
+  - /etc/prometheus/alerts.yml
+
+scrape_configs:
+  - job_name: notifier-api
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["host.docker.internal:8000"]
+        labels: {environment: local}
+
+  - job_name: notifier-worker
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["host.docker.internal:9100"]
+        labels: {environment: local}
