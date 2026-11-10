@@ -15,7 +15,8 @@ Opciones comunes:
 Advertencia: la carga local en Windows no representa a la VM de Azure. Usar los mismos
 parámetros en ambos entornos y anotar en qué entorno se corrió. El canal email local va a Mailpit.
 
-El tiempo final se mide con created_at y delivered_at/updated_at del servidor, no con el reloj del script.
+El tiempo final se mide con created_at y delivered_at/updated_at del servidor,
+no con el reloj del script.
 Termina con código 1 si una comprobación falla. Que la cola se acumule no es una falla.
 Si falta API_KEY, imprime este uso y sale con código 2.
 """
