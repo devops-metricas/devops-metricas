@@ -1,0 +1,11 @@
+# Para ver trazas desde Grafana se puede anadir un segundo datasource de tipo jaeger
+# con url http://jaeger.observability.svc.cluster.local:16686 cuando el namespace
+# observability este desplegado (no se anade todavia).
+apiVersion: 1
+datasources:
+  - name: Prometheus
+    type: prometheus
+    uid: prometheus
+    access: proxy
+    url: http://prometheus.monitoring.svc:9090
+    isDefault: true
