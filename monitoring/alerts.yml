@@ -1,0 +1,35 @@
+groups:
+  - name: notifier-alerts
+    interval: 30s
+    rules:
+      # Ventana: rate de 2m sobre los intentos de entrega.
+      # Intervalo de evaluacion: 30s (interval del grupo).
+      # Periodo pendiente: 1m (for); la condicion debe seguir cierta ese tiempo antes de disparar.
+      # Falsos positivos: con trafico apenas por encima de 0.02 intentos/s, pocos fallos superan el 20 por ciento. Un outcome distinto de success (reintento o fallo transitorio) cuenta aunque la notificacion se entregue despues.
+      - alert: NotifierDeliveryFailureRatioHigh
+        expr: |
+          (
+            sum by (channel) (rate(notifier_delivery_attempts_total{outcome!="success"}[2m]))
+            /
+            sum by (channel) (rate(notifier_delivery_attempts_total[2m]))
+          ) > 0.20
+          and
+          sum by (channel) (rate(notifier_delivery_attempts_total[2m])) > 0.02
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Fallos de entrega altos en el canal {{ $labels.channel }}"
+          description: "Mas del 20 por ciento de los intentos de entrega del canal {{ $labels.channel }} fallan (ventana 2m, pendiente 1m, minimo de trafico 0.02 intentos/s)."
+      # Ventana: no hay rango; se compara el valor instantaneo del gauge.
+      # Intervalo de evaluacion: 30s (interval del grupo).
+      # Periodo pendiente: 2m (for).
+      # Falsos positivos: un solo trabajo con mas de 30 s de espera dispara la alerta aunque el resto de la cola este al dia. Si el worker se detiene la serie desaparece y la regla no llega a disparar.
+      - alert: NotifierQueueDelayHigh
+        expr: max(notifier_oldest_pending_age_seconds) > 30
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "El trabajo pendiente mas viejo supera 30 s"
+          description: "Hay trabajos listos para procesar que llevan mas de 30 s esperando (pendiente 2m). Limitacion: si el worker se detiene la serie desaparece y esta regla no dispara."

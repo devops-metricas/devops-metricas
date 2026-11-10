@@ -1,0 +1,5 @@
+# Namespace del stack de monitoreo. Lo comparten Prometheus y Grafana.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring

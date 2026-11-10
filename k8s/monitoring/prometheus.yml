@@ -1,0 +1,68 @@
+# Prometheus dentro de K3s. Lee los pods anotados de la aplicacion y el cAdvisor del nodo.
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - /etc/prometheus/alerts.yml
+
+scrape_configs:
+  # La regla de alerta agrega por canal entre dev y prod; mientras prod no tenga trafico no hay efecto.
+  - job_name: kubernetes-pods
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names: [notifier-dev, notifier-prod]
+    relabel_configs:
+      # Solo los pods que piden ser leidos.
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+        action: keep
+        regex: "true"
+      # prometheus.io/path; si no viene la anotacion, Prometheus deja /metrics.
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+        action: replace
+        regex: (.+)
+        target_label: __metrics_path__
+      # IP del pod mas el puerto de prometheus.io/port.
+      - source_labels: [__meta_kubernetes_pod_ip, __meta_kubernetes_pod_annotation_prometheus_io_port]
+        action: replace
+        regex: ([^;]+);(\d+)
+        replacement: $1:$2
+        target_label: __address__
+      # La etiqueta app (api o worker) pasa a ser el job notifier-api o notifier-worker.
+      - source_labels: [__meta_kubernetes_pod_label_app]
+        action: replace
+        regex: (api|worker)
+        replacement: notifier-$1
+        target_label: job
+      - source_labels: [__meta_kubernetes_namespace]
+        action: replace
+        target_label: namespace
+      - source_labels: [__meta_kubernetes_pod_name]
+        action: replace
+        target_label: pod
+      # notifier-dev -> dev, notifier-prod -> prod.
+      - source_labels: [__meta_kubernetes_namespace]
+        action: replace
+        regex: notifier-(.+)
+        replacement: $1
+        target_label: environment
+
+  - job_name: kubelet-cadvisor
+    scheme: https
+    tls_config:
+      ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    authorization:
+      credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+    kubernetes_sd_configs:
+      - role: node
+    relabel_configs:
+      - target_label: __address__
+        replacement: kubernetes.default.svc:443
+      - source_labels: [__meta_kubernetes_node_name]
+        action: replace
+        regex: (.+)
+        replacement: /api/v1/nodes/$1/proxy/metrics/cadvisor
+        target_label: __metrics_path__
+      - target_label: job
+        replacement: kubelet-cadvisor
