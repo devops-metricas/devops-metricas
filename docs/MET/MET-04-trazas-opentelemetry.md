@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Responsable** | Camila |
-| **Estado** | Parcial: cadena completa verificada en local; falta instalar y capturar en el clúster |
+| **Estado** | Cubierto: cadena verificada en local e instalada y consultada en `dev` |
 | **Evidencia mínima que se revisa** | Trazas consultables y correlación razonable entre señales. |
 
 ## 1. Arquitectura de trazas
@@ -115,6 +115,14 @@ ssh -L 16686:localhost:16686 <usuario>@<ip-publica> \
 ## Evidencia
 
 - [x] Cadena completa en local: [MET-04-traza-local.txt](../evidencias/MET-04-traza-local.txt).
-- [ ] Pods del colector y Jaeger en `Running`: salida de `aplicar-observabilidad.sh` → `evidencias/MET-04-instalacion.txt`.
-- [ ] Traza del clúster con reintentos: `correlacion.sh` → `evidencias/MET-04-traza-<id>.json`.
-- [ ] Captura de la traza en la interfaz de Jaeger → `evidencias/MET-04-jaeger.png`.
+- [x] Colector y Jaeger en `Running` en `dev`: [MET-04-instalacion.txt](../evidencias/MET-04-instalacion.txt).
+- [x] Traza del clúster con reintentos y reproceso:
+  [MET-07-traza-863f3fdb.txt](../evidencias/MET-07-traza-863f3fdb.txt). Cuatro intentos en una sola
+  traza: tres `email.send` en error separados por el backoff (0,2 s, 5,4 s y 15,7 s desde la
+  aceptación) y la entrega del reproceso a los 1228,7 s. Análisis en
+  [MET-07](MET-07-incidente-controlado.md#una-notificación-de-punta-a-punta).
+- [ ] Opcional: captura de la traza en la interfaz de Jaeger → `evidencias/MET-04-jaeger.png`.
+
+**Detalle práctico.** `az vm run-command` recorta la salida a 4 KB y una traza completa pesa más: por
+eso `scripts/correlacion.sh` resume la traza dentro de la VM (servicio, operación, intento y error de
+cada span) y no la descarga entera.

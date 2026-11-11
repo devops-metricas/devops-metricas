@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Responsable** | Camila |
-| **Estado** | Parcial: verificado en local; falta la captura en el clúster |
+| **Estado** | Cubierto: verificado en local y en `dev` (incidente de MET-07) |
 | **Evidencia mínima que se revisa** | Registros con identificadores que permitan correlación. |
 
 ## 1. Formato
@@ -97,4 +97,13 @@ script `scripts/correlacion.sh` hace los pasos 1 a 3 y guarda la evidencia.
 ## Evidencia
 
 - [x] Correlación verificada en local: [MET-02-correlacion-local.txt](../evidencias/MET-02-correlacion-local.txt).
-- [ ] En el clúster: `scripts/correlacion.sh <id> dev` → `evidencias/MET-02-correlacion-<id>.txt`.
+- [x] En `dev`: [MET-02-correlacion-02e7bade.txt](../evidencias/MET-02-correlacion-02e7bade.txt),
+  notificación del incidente de [MET-07](MET-07-incidente-controlado.md). El mismo `trace_id`
+  (`863f3fdb…`) aparece en la aceptación de la API (00:43:33 UTC) y en el intento 4 del worker
+  (01:04:02 UTC, tras el reproceso), 20 minutos después y en otro Pod. El reproceso tiene su propio
+  `trace_id` (`8907f0c2…`) y se une por el `notification_id`, como se describe en la sección 3.
+
+**Hallazgo en `dev`.** Los logs de los intentos 1 a 3 de esa notificación no aparecieron: los escribió
+el Pod del worker que se reemplazó al quitar la falla, y se perdieron con él (sección 5). La traza sí los
+conservó ([MET-07-traza-863f3fdb.txt](../evidencias/MET-07-traza-863f3fdb.txt)). Logs y trazas se
+complementan: el log da el `trace_id` y la traza da la historia completa.
