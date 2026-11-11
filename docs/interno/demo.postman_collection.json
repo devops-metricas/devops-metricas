@@ -31,6 +31,10 @@
     {
       "key": "id_pendiente",
       "value": ""
+    },
+    {
+      "key": "id_permanente",
+      "value": ""
     }
   ],
   "item": [
@@ -585,6 +589,257 @@
             },
             "description": "Antes y después de borrar el Pod de PostgreSQL."
           }
+        }
+      ]
+    },
+    {
+      "name": "9. Escenarios sorpresa (a pedido del docente)",
+      "item": [
+        {
+          "name": "9a. Error permanente: correo a @invalid.test",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/notifications",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "notifications"
+              ]
+            },
+            "description": "202; luego debe quedar failed con 1 solo intento.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recipient\": \"ana@invalid.test\",\n  \"channel\": \"email\",\n  \"subject\": \"Direccion invalida\",\n  \"body\": \"Demo en vivo\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j.id) pm.collectionVariables.set('id_permanente', j.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "9b. Estado del error permanente (failed, 1 intento)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/notifications/{{id_permanente}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "notifications",
+                "{{id_permanente}}"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "9c. Reprocesar una ya entregada (409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{admin_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/notifications/{{id}}/reprocess",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "notifications",
+                "{{id}}",
+                "reprocess"
+              ]
+            },
+            "description": "Usa {{id}}: la ultima de 1a/2a, entregada. Solo se reprocesa failed."
+          }
+        },
+        {
+          "name": "9d. Canal que no existe (422)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/notifications",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "notifications"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recipient\": \"ana@example.test\",\n  \"channel\": \"sms\",\n  \"subject\": \"Canal invalido\",\n  \"body\": \"Demo en vivo\"\n}"
+            }
+          }
+        },
+        {
+          "name": "9e. Cuerpo vacio (422)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/notifications",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "notifications"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recipient\": \"ana@example.test\",\n  \"channel\": \"internal\",\n  \"subject\": \"Sin cuerpo\",\n  \"body\": \"\"\n}"
+            }
+          }
+        },
+        {
+          "name": "9f. Notificacion inexistente (404)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/notifications/00000000-0000-0000-0000-000000000000",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "notifications",
+                "00000000-0000-0000-0000-000000000000"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "9g. Reprocesar sin ser admin (403)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/notifications/{{id}}/reprocess",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "notifications",
+                "{{id}}",
+                "reprocess"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "9h. Enviar libre (editar el cuerpo a pedido del docente)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/notifications",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "notifications"
+              ]
+            },
+            "description": "Editar destinatario, canal, asunto o contenido en Body y pulsar Send.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recipient\": \"ana@example.test\",\n  \"channel\": \"internal\",\n  \"subject\": \"A pedido del docente\",\n  \"body\": \"Demo en vivo\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j.id) pm.collectionVariables.set('id', j.id);"
+                ]
+              }
+            }
+          ]
         }
       ]
     }
