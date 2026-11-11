@@ -17,7 +17,6 @@
       "Read(./**/*.tfstate)",
       "Read(./**/*.tfstate.*)",
       "Read(./**/*.tfvars)",
-      "Read(./docs/evidencias/**)",
       "Read(./docs/*.pdf)",
       "Bash(terraform apply:*)",
       "Bash(terraform destroy:*)"
