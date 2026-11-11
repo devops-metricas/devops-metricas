@@ -1,11 +1,11 @@
 # MET-06: Configurar alertas vinculadas a condiciones justificadas.
 
-> **Parcial.**
+> **Cubierto.** Dos alertas justificadas; `NotifierDeliveryFailureRatioHigh` demostrada en K3s pasando por pending, firing y resuelta.
 
 | | |
 |---|---|
 | **Responsable** | Rene |
-| **Estado** | Parcial |
+| **Estado** | Cubierto |
 | **Evidencia mínima que se revisa** | Regla, evidencia de activación y explicación de posibles falsos positivos. |
 
 ## Qué hay y qué falta
@@ -31,9 +31,9 @@ Otros falsos positivos de la regla de entregas: la alerta se cierra sola si el t
 mínimo, y un fallo transitorio que luego se reintenta con éxito cuenta como intento fallido. La regla
 mira intentos, no el estado final de la notificación.
 
-**Falta** demostrar en K3s el disparo y la recuperación de `NotifierDeliveryFailureRatioHigh` con tráfico
-sostenido mientras se corrige la causa, y el disparo de `NotifierQueueDelayHigh`. Eso se hará con el
-incidente controlado de [MET-07](MET-07-incidente-controlado.md).
+`NotifierDeliveryFailureRatioHigh` ya se demostró en K3s, en el incidente de
+[MET-07](MET-07-incidente-controlado.md). **Falta** el disparo de `NotifierQueueDelayHigh`: habría que
+degradar la capacidad del worker, no el proveedor de correo.
 
 ## Evidencia
 
@@ -107,21 +107,61 @@ los paneles: la antigüedad del pendiente más viejo ronda 1 s, por debajo de lo
 `NotifierDeliveryFailureRatioHigh`. Es una inferencia de los paneles, no una captura de alertas durante
 la carga.
 
-**Hipótesis.** No hay una hipótesis nueva. Sigue sin demostrarse, en K3s, el disparo y la recuperación
-con tráfico sostenido, y el disparo de `NotifierQueueDelayHigh`. Queda para MET-07.
+**Hipótesis.** El disparo y la recuperación con tráfico sostenido ya se demostraron en K3s; está en la
+subsección siguiente. Solo falta el disparo de `NotifierQueueDelayHigh`.
+
+### Demostración en K3s con el incidente de MET-07 (10/11/2026)
+
+Horas locales de El Salvador (UTC−6), estimadas a partir de las gráficas con margen de un minuto. La
+línea de tiempo exacta de la salida del script está en
+[MET-07](MET-07-incidente-controlado.md). El incidente fue una falla del proveedor de correo al 60 %,
+con tráfico de unos 1,8 req/s sostenido.
+
+| Hora (aprox.) | Evento | Evidencia |
+|---|---|---|
+| ~18:37 | Inicio del tráfico (base, éxito 100 %) | [incidente, arriba](../evidencias/MET-06-k3s-incidente-completo-arriba.png) |
+| ~18:42 | Se activa la falla y la alerta pasa a pending | [pending](../evidencias/MET-06-k3s-alerta-pending.png) |
+| ~18:43 | Pasa a firing | [pending a firing](../evidencias/MET-06-k3s-alerta-pending-a-firing.png) |
+| ~18:47 | Se quita la falla y `transient_error` cae a 0 | [incidente, abajo](../evidencias/MET-06-k3s-incidente-completo-abajo.png) |
+| ~18:49 | La serie firing termina (alerta resuelta) | [resuelta](../evidencias/MET-06-k3s-alerta-resuelta.png) |
+| ~18:52 | Termina el tráfico | [incidente, arriba](../evidencias/MET-06-k3s-incidente-completo-arriba.png) |
+
+**Observado.** `NotifierDeliveryFailureRatioHigh` con `{channel="email", severity="critical"}` pasó de
+pending a firing y luego a resuelta. El canal `internal` no se activó. El éxito del email en la ventana
+de 5 min bajó hasta ~77 % (~18:46) y volvió a 100 %. La latencia p95 del email llegó a ~25 s y volvió a
+~1 s. El backlog máximo fue de ~15 pendientes y volvió a ~0. La antigüedad del pendiente más viejo se
+mantuvo bajo ~1 s. La CPU máxima fue ~1,1 %.
+
+![Alerta en pending durante el incidente](../evidencias/MET-06-k3s-alerta-pending.png)
+
+![La alerta pasa de pending a firing](../evidencias/MET-06-k3s-alerta-pending-a-firing.png)
+
+![Alerta resuelta](../evidencias/MET-06-k3s-alerta-resuelta.png)
+
+![Incidente completo, paneles superiores](../evidencias/MET-06-k3s-incidente-completo-arriba.png)
+
+![Incidente completo, paneles inferiores](../evidencias/MET-06-k3s-incidente-completo-abajo.png)
+
+**Interpretación.** La alerta se resolvió cuando se quitó la falla y el tráfico seguía muy por encima de
+0,02 intentos/s: el tráfico terminó ~18:52, después de resolverse ~18:49. La recuperación no se debió a
+falta de tráfico. `NotifierQueueDelayHigh` no se disparó. El pendiente más viejo se mantuvo bajo ~1 s
+porque el incidente degrada al proveedor y no la capacidad; los reintentos tienen backoff de 5 s y 10 s.
+Eso es lo esperado y no demuestra un fallo de la regla.
 
 ## Interpretación
 
 En las dos corridas la alerta dejó de estar en firing cuando el lote con falla terminó y los intentos
 cayeron por debajo del mínimo de tráfico (0,02 intentos/s), antes de reiniciar el worker sin falla. La
 recuperación demostrada es por falta de tráfico, no una recuperación limpia tras corregir la causa con
-tráfico sano todavía presente. Es una limitación de la regla y de esta demostración.
+tráfico sano todavía presente. Es una limitación de la regla y de esta demostración. Esa limitación
+corresponde a las corridas locales; la corrida en K3s la superó.
 
 ## Hipótesis
 
-No está verificado que `NotifierDeliveryFailureRatioHigh` se recupere al quitar la falla si el tráfico
-sigue por encima de 0,02 intentos/s. Lo pendiente es repetir la demostración sosteniendo tráfico durante
-la corrección.
+La hipótesis sobre la recuperación con tráfico sostenido sí quedó verificada en K3s: al quitar la falla
+el tráfico seguía muy por encima de 0,02 intentos/s. Está en la subsección del incidente de MET-07.
 
-Tampoco está verificado el disparo de `NotifierQueueDelayHigh`. En las capturas de esta corrida permanece
-en 0 active; eso muestra que aquí no disparó, no que la condición no pueda cumplirse.
+Sigue sin demostrarse el disparo de `NotifierQueueDelayHigh`. En las capturas locales permanece en 0
+active; eso muestra que ahí no disparó, no que la condición no pueda cumplirse. En K3s tampoco se disparó,
+y es lo esperado: el incidente degradó al proveedor, no la capacidad. Habría que provocarlo degradando la
+capacidad del worker (por ejemplo, detenerlo o limitarlo), no el proveedor.
