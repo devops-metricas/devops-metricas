@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Responsable** | Camila |
-| **Estado** | Parcial: definiciones completas; falta la medición en el clúster (sección 5) |
+| **Estado** | Cubierto: catálogo completo; SLI-1 y SLI-2 medidos en `dev` (sección 5) |
 | **Evidencia mínima que se revisa** | Catálogo con definición, unidad, fuente, forma de cálculo y propósito. |
 
 Cubre también los puntos 1, 2 y 4 del Anexo II (preguntas operativas, SLIs/SLOs y métricas de
@@ -109,14 +109,19 @@ consultan siempre con `rate()` o `increase()`, que toleran el reinicio a cero al
 **Resultado y latencia** (Anexo II, punto 4): de resultado son I-5 e I-8; de latencia o espera, I-7,
 I-9, I-11 e I-12.
 
-## 5. Medición en el clúster (pendiente)
+## 5. Medición en el clúster
 
-Cuando Rene tenga Prometheus en el clúster, ejecutar las consultas de SLI-1, SLI-2 y SLI-3 en una
-ventana de 1 h con tráfico (`python scripts/smoke.py batch` o `scripts/incidente.py`) y pegar aquí los
-valores y la captura (`evidencias/MET-01-slis.png`).
+Medidos durante el incidente controlado de [MET-07](MET-07-incidente-controlado.md) (corrida
+`2699b5ea`, `dev`, 2026-11-11 00:36–00:52 UTC, 1646 notificaciones). La ventana es la de la corrida
+(16 min), no la de 1 h ni la de 7 días: sirve para demostrar el cálculo, no como medición de operación.
 
-| SLI | Valor medido | Ventana | Fecha (UTC) | Presupuesto consumido |
+| SLI | Valor medido | Ventana | Fuente | Presupuesto consumido |
 |---|---|---|---|---|
-| SLI-1 | | 1 h | | |
-| SLI-2 | | 1 h | | |
-| SLI-3 | | 1 h | | |
+| SLI-1 | 100 % (1646 de 1646, sin 5xx) | 16 min | respuestas recibidas por `scripts/incidente.py` | 0 % |
+| SLI-2 | 95,1 % (1565 de 1646 en ≤ 30 s) | 16 min | tabla `notifications` ([detalle](../evidencias/MET-07-incidente-2699b5ea.md)) | 98 % (81 de 82 permitidas) |
+| SLI-2, solo degradación del correo | 78,7 % | 5 min | ídem | 4,3 veces el presupuesto |
+| SLI-3 | no medido en esta corrida | | `http_request_duration_seconds` en Prometheus (MET-03) | |
+
+El SLO-B se cumplió en la corrida completa por muy poco, aunque se incumplió con holgura durante los
+5 minutos de degradación: es el ejemplo de por qué la ventana del SLO importa (sección 3). SLI-3 se puede
+leer en el panel de latencia de la API de [MET-05](MET-05-dashboards.md).
