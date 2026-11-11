@@ -6,7 +6,7 @@
 #
 #   RESOURCE_GROUP=... VM_NAME=... ./scripts/correlacion.sh <notification_id> [dev|prod]
 #
-# Guarda todo en docs/evidencias/MET-02-correlacion-<id>.txt y MET-04-traza-<trace_id>.json.
+# Guarda todo en docs/evidencias/MET-02-correlacion-<id>.txt y MET-04-traza-<trace_id>.txt.
 
 set -euo pipefail
 NID="${1:?uso: correlacion.sh <notification_id> [dev|prod]}"
@@ -28,20 +28,28 @@ if [[ -z "$TRACE_ID" ]]; then
   exit 1
 fi
 echo ">> trace_id=$TRACE_ID; consultando Jaeger"
-TRAZA="$RAIZ/docs/evidencias/MET-04-traza-${TRACE_ID:0:12}.json"
-"$RAIZ/scripts/vm.sh" "k3s kubectl get --raw \
-  /api/v1/namespaces/observability/services/jaeger:16686/proxy/api/traces/$TRACE_ID" > "$TRAZA"
+TRAZA="$RAIZ/docs/evidencias/MET-04-traza-${TRACE_ID:0:12}.txt"
 
-# Resumen legible: servicio, operación y duración de cada span.
-python3 - "$TRAZA" <<'PY'
-import json, re, sys
-texto = open(sys.argv[1]).read()
-datos = json.loads(texto[texto.index("{"):texto.rindex("}") + 1])
-for t in datos.get("data", []):
-    procesos = {k: v["serviceName"] for k, v in t["processes"].items()}
-    inicio = min(s["startTime"] for s in t["spans"])
+# La salida de run-command se recorta a 4 KB y una traza completa pesa más: se resume dentro de la VM
+# (servicio, operación, intento y error de cada span; sin los spans de SQL ni los internos de HTTP).
+RESUMEN="$(base64 -w0 <<'PY'
+import json, sys
+d = json.load(sys.stdin)
+for t in d.get("data", []):
+    pr = {k: v["serviceName"] for k, v in t["processes"].items()}
+    t0 = min(s["startTime"] for s in t["spans"])
+    print(f"traza {t['traceID']}: {len(t['spans'])} spans")
     for s in sorted(t["spans"], key=lambda s: s["startTime"]):
-        print(f'{(s["startTime"]-inicio)/1000:9.1f} ms  +{s["duration"]/1000:8.1f} ms  '
-              f'{procesos[s["processID"]]:<16} {s["operationName"]}')
+        if s["operationName"] in ("SELECT", "INSERT", "UPDATE") or " http " in s["operationName"]:
+            continue
+        tg = {x["key"]: x["value"] for x in s["tags"]}
+        err = "ERROR" if tg.get("error") or tg.get("otel.status_code") == "ERROR" else ""
+        print(f"{(s['startTime'] - t0) / 1e6:9.2f} s +{s['duration'] / 1000:8.1f} ms "
+              f"{pr[s['processID']]:<16} {s['operationName']:<26} "
+              f"{tg.get('notification.attempt', '')} {err}")
 PY
+)"
+"$RAIZ/scripts/vm.sh" "echo $RESUMEN | base64 -d > /tmp/resumen_traza.py; k3s kubectl get --raw \
+  /api/v1/namespaces/observability/services/jaeger:16686/proxy/api/traces/$TRACE_ID \
+  | python3 /tmp/resumen_traza.py" | tee "$TRAZA"
 echo "Evidencia: $SALIDA y $TRAZA"

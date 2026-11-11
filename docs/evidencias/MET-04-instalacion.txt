@@ -1,0 +1,16 @@
+Enable succeeded: 
+[stdout]
+namespace/observability unchanged
+configmap/otel-collector-config unchanged
+service/jaeger unchanged
+service/otel-collector unchanged
+deployment.apps/jaeger unchanged
+deployment.apps/otel-collector unchanged
+deployment "otel-collector" successfully rolled out
+deployment "jaeger" successfully rolled out
+NAME                              READY   STATUS    RESTARTS   AGE     IP            NODE          NOMINATED NODE   READINESS GATES
+jaeger-8475f95b55-ptj8q           1/1     Running   0          5m41s   10.42.0.111   vm-notifier   <none>           <none>
+otel-collector-5b949db689-wfh9g   1/1     Running   0          5m41s   10.42.0.112   vm-notifier   <none>           <none>
+OBSERVABILIDAD_OK
+
+[stderr]

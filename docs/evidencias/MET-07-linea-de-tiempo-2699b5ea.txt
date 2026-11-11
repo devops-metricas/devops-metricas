@@ -1,0 +1,13 @@
+# MET-07: salida de scripts/incidente.py en dev, corrida 2699b5ea (horas en UTC)
+# Copiada de la terminal. Tras la última línea el script terminó con KeyError: una solicitud en vuelo
+# se registró después de tomar la lista de IDs (condición de carrera, corregida). Los resultados se
+# calcularon después desde la base de datos con scripts/incidente_reanudar.py.
+2026-11-11T00:36:13Z  corrida 2699b5ea: 2.0 solicitudes/s, fases de 300 s
+2026-11-11T00:36:13Z  objetivo de entrega oportuna: 30 s
+2026-11-11T00:36:13Z  fase base (proveedor sano)
+2026-11-11T00:41:13Z  inicio: activar falla del proveedor de correo
+2026-11-11T00:41:49Z  fin: activar falla del proveedor de correo
+2026-11-11T00:46:49Z  inicio: quitar la falla del proveedor de correo
+2026-11-11T00:47:25Z  fin: quitar la falla del proveedor de correo
+2026-11-11T00:52:25Z  fin del tráfico: 1645 solicitudes aceptadas
+2026-11-11T00:54:15Z  todas las notificaciones en estado final (o se agotó la espera)
