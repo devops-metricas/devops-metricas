@@ -1,0 +1,14 @@
+# Correlación de la notificación 02e7bade-b5d4-49f5-9a86-c378e0fa6ce4 (notifier-dev), 2026-11-11T01:07:53Z
+Enable succeeded: 
+[stdout]
+{"notification_id": "02e7bade-b5d4-49f5-9a86-c378e0fa6ce4", "client": "app-incidente", "channel": "email", "event": "notification_accepted", "request_id": "inc-2699b5ea-772", "component": "api", "environment": "dev", "level": "info", "timestamp": "2026-11-11T00:43:33.641910Z", "trace_id": "863f3fdbb2bab71b0f637d68bab98aed", "span_id": "b67dfe02cc60ffad"}
+{"method": "GET", "path": "/v1/notifications/02e7bade-b5d4-49f5-9a86-c378e0fa6ce4", "status": 200, "duration_ms": 2.8, "event": "request_completed", "request_id": "79465c4f41b74bc097fa7508d08c3a6b", "component": "api", "environment": "dev", "level": "info", "timestamp": "2026-11-11T00:53:22.077675Z", "trace_id": "d03dbc1fffee58e56a9b5076930e7daf", "span_id": "79c4cb33e3ee68a3"}
+INFO:     10.42.0.110:47540 - "GET /v1/notifications/02e7bade-b5d4-49f5-9a86-c378e0fa6ce4 HTTP/1.1" 200 OK
+{"notification_id": "02e7bade-b5d4-49f5-9a86-c378e0fa6ce4", "by": "ops-incidente", "event": "notification_reprocessed", "request_id": "6f4b9058188f4381b76069c48db1b294", "component": "api", "environment": "dev", "level": "info", "timestamp": "2026-11-11T01:04:01.578388Z", "trace_id": "8907f0c27b9572905931a0c3afb0fada", "span_id": "c6d466acc1530070"}
+{"method": "POST", "path": "/v1/notifications/02e7bade-b5d4-49f5-9a86-c378e0fa6ce4/reprocess", "status": 202, "duration_ms": 12.2, "event": "request_completed", "request_id": "6f4b9058188f4381b76069c48db1b294", "component": "api", "environment": "dev", "level": "info", "timestamp": "2026-11-11T01:04:01.579016Z", "trace_id": "8907f0c27b9572905931a0c3afb0fada", "span_id": "c6d466acc1530070"}
+INFO:     10.42.0.110:51786 - "POST /v1/notifications/02e7bade-b5d4-49f5-9a86-c378e0fa6ce4/reprocess HTTP/1.1" 202 Accepted
+---- worker ----
+{"notification_id": "02e7bade-b5d4-49f5-9a86-c378e0fa6ce4", "channel": "email", "attempt": 4, "outcome": "success", "final_status": "delivered", "error": null, "event": "delivery_attempt", "environment": "dev", "component": "worker", "level": "info", "timestamp": "2026-11-11T01:04:02.301030Z", "trace_id": "863f3fdbb2bab71b0f637d68bab98aed", "span_id": "be5d8f8ec267fb3b"}
+
+[stderr]
+Defaulted container "api" out of: api, migrate (init)

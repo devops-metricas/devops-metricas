@@ -1,0 +1,15 @@
+Enable succeeded: 
+[stdout]
+traza 863f3fdbb2bab71b0f637d68bab98aed: 29 spans
+     0.00 s +     7.5 ms notifier-api     POST /v1/notifications      
+     0.21 s +     3.8 ms notifier-worker  notification.process       1 
+     0.21 s +     0.3 ms notifier-worker  email.send                  ERROR
+     5.35 s +     3.7 ms notifier-worker  notification.process       2 
+     5.35 s +     0.2 ms notifier-worker  email.send                  ERROR
+    15.65 s +     3.9 ms notifier-worker  notification.process       3 
+    15.65 s +     0.3 ms notifier-worker  email.send                  ERROR
+  1228.65 s +    12.3 ms notifier-worker  notification.process       4 
+  1228.65 s +     7.8 ms notifier-worker  email.send                  
+
+[stderr]
+
