@@ -115,7 +115,8 @@ subsección siguiente. Solo falta el disparo de `NotifierQueueDelayHigh`.
 Horas locales de El Salvador (UTC−6), estimadas a partir de las gráficas con margen de un minuto. La
 línea de tiempo exacta de la salida del script está en
 [MET-07](MET-07-incidente-controlado.md). El incidente fue una falla del proveedor de correo al 60 %,
-con tráfico de unos 1,8 req/s sostenido.
+con tráfico de unos 1,8 req/s sostenido. En UTC, la alerta de esta corrida estuvo activa entre las
+00:41 y las 00:50 del 11/11/2026, según la línea de tiempo de MET-07.
 
 | Hora (aprox.) | Evento | Evidencia |
 |---|---|---|
