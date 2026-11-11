@@ -3,7 +3,7 @@
 Un documento por requisito, con su ID al inicio del nombre. Las capturas están en
 [evidencias/](evidencias). Este índice se actualiza al cerrar cada requisito.
 
-**Resumen:** 26 cubiertos, 2 parciales, 0 pendientes.
+**Resumen:** 28 cubiertos, 0 parciales, 0 pendientes.
 
 | Requisito | Documento | Responsable | Estado |
 |---|---|---|---|
@@ -26,7 +26,7 @@ Un documento por requisito, con su ID al inicio del nombre. Las capturas están 
 | DEV-11 | [DEV-11-probes-y-recursos.md](DEV/DEV-11-probes-y-recursos.md) | Diego | Cubierto |
 | DEV-12 | [DEV-12-rollback.md](DEV/DEV-12-rollback.md) | Diego | Cubierto |
 | DEV-13 | [DEV-13-reconstruccion.md](DEV/DEV-13-reconstruccion.md) | Melissa | Cubierto |
-| DEV-14 | [DEV-14-costos.md](DEV/DEV-14-costos.md) | Melissa | Parcial |
+| DEV-14 | [DEV-14-costos.md](DEV/DEV-14-costos.md) | Melissa | Cubierto |
 | MET-01 | [MET-01-catalogo-de-indicadores.md](MET/MET-01-catalogo-de-indicadores.md) | Camila | Cubierto |
 | MET-02 | [MET-02-logs-estructurados.md](MET/MET-02-logs-estructurados.md) | Camila | Cubierto |
 | MET-03 | [MET-03-metricas-de-aplicacion.md](MET/MET-03-metricas-de-aplicacion.md) | Rene | Cubierto |
@@ -34,7 +34,7 @@ Un documento por requisito, con su ID al inicio del nombre. Las capturas están 
 | MET-05 | [MET-05-dashboards.md](MET/MET-05-dashboards.md) | Rene | Cubierto |
 | MET-06 | [MET-06-alertas.md](MET/MET-06-alertas.md) | Rene | Cubierto |
 | MET-07 | [MET-07-incidente-controlado.md](MET/MET-07-incidente-controlado.md) | Camila | Cubierto |
-| ESC1 | [ESC1-requisitos.md](ESC1/ESC1-requisitos.md) | Melissa | Parcial |
+| ESC1 | [ESC1-requisitos.md](ESC1/ESC1-requisitos.md) | Melissa | Cubierto |
 
 Estados: **Cubierto** (implementado y con evidencia), **Parcial** (hay implementación o documento, falta
 evidencia o una parte) y **Pendiente** (aún no hay evidencia).
