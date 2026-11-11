@@ -167,7 +167,8 @@ def main() -> None:
         sys.exit(__doc__)
     mark(f"corrida {RUN}: {RATE} solicitudes/s, fases de {PHASE_SECONDS:g} s")
     mark(f"objetivo de entrega oportuna: {OBJETIVO_S:g} s")
-    threading.Thread(target=sender, daemon=True).start()
+    hilo = threading.Thread(target=sender, daemon=True)
+    hilo.start()
 
     mark("fase base (proveedor sano)")
     time.sleep(PHASE_SECONDS)
@@ -180,6 +181,7 @@ def main() -> None:
     run_cmd(RESTORE_CMD, "quitar la falla del proveedor de correo")
     time.sleep(PHASE_SECONDS)
     stop.set()
+    hilo.join(timeout=30)  # esperar la solicitud en vuelo: si no, queda fuera de la consulta
     mark(f"fin del tráfico: {len(sent)} solicitudes aceptadas")
 
     ids = [s["id"] for s in sent]
