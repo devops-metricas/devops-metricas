@@ -139,4 +139,35 @@ Si el worker quedó en 0 réplicas:
 - **Cifrado de Secrets en K3s:** protege el almacén en disco; no protege de quien administre el clúster.
 - **Por qué `202`:** la API solo registra; la entrega es asíncrona.
 
+---
+
+## 9. "Hazlo en producción"
+Es lo mismo que en `dev`, con tres diferencias: namespace `notifier-prod`, ruta `/prod` y aprobación en *Entrega*.
+Estos comandos **no se han ejecutado contra la VM**: probarlos en el ensayo.
+
+**Claves de prod** (las de dev no sirven; se muestran una sola vez, anótalas):
+```bash
+./scripts/vm.sh "k3s kubectl -n notifier-prod exec deploy/api -- python -m notifier.cli create-client app-prod-$RANDOM"
+./scripts/vm.sh "k3s kubectl -n notifier-prod exec deploy/api -- python -m notifier.cli create-client operaciones-prod-$RANDOM --admin"
+```
+
+**Postman:** duplicar la colección como "Demo (prod)" y cambiar `base_url` a
+`https://notifier-melissa-esen.northcentralus.cloudapp.azure.com/prod` (sin barra final), más `api_key` y `admin_key`.
+
+**Comandos:** los de las secciones 3, 5 y 7 con `-n notifier-prod` en lugar de `-n notifier-dev`. Versión que corre:
+```bash
+./scripts/vm.sh "k3s kubectl -n notifier-prod get deploy api -o jsonpath='{.spec.template.spec.containers[0].image}'"
+```
+
+| Seguro | Con cuidado | Evitar |
+|---|---|---|
+| Consultar (`get`, `describe`, `logs`), `GET /v1/stats`, un envío de prueba | Borrar un Pod (hay un corte breve), reprocesar | Lotes grandes, `NOTIFIER_EMAIL_FAULT_RATE`, imagen inexistente |
+
+Rollback en prod: *Entrega* → **Run workflow** con el SHA anterior y entorno `prod`; requiere que un aprobador
+del entorno `prod` lo apruebe (**preguntar a Diego quién es y que esté disponible**). Verificar con el comando
+de la imagen y **Postman → 0. Salud**.
+
+Qué decir: "en producción cambio lo mínimo y reversible; la falla se simula en `dev`, que tiene la misma
+configuración".
+
 Más respuestas en [guia-defensa.md](guia-defensa.md).
