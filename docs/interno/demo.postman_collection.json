@@ -1,0 +1,592 @@
+{
+  "info": {
+    "name": "Demo notificaciones (dev)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://notifier-melissa-esen.northcentralus.cloudapp.azure.com/dev"
+    },
+    {
+      "key": "api_key",
+      "value": ""
+    },
+    {
+      "key": "admin_key",
+      "value": ""
+    },
+    {
+      "key": "id",
+      "value": ""
+    },
+    {
+      "key": "id_correo",
+      "value": ""
+    },
+    {
+      "key": "id_interno",
+      "value": ""
+    },
+    {
+      "key": "id_pendiente",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "0. Salud",
+      "item": [
+        {
+          "name": "0. Salud (readyz)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/readyz",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "readyz"
+              ]
+            },
+            "description": "Debe responder {\"status\":\"ready\"}."
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. Una notificación",
+      "item": [
+        {
+          "name": "1a. Enviar (202)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/notifications",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "notifications"
+              ]
+            },
+            "description": "202 = recibida y registrada, no entregada.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recipient\": \"ana@example.test\",\n  \"channel\": \"internal\",\n  \"subject\": \"Hola\",\n  \"body\": \"Demo en vivo\",\n  \"idempotency_key\": \"demo-1\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j.id) pm.collectionVariables.set('id', j.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "1b. Estado e historial",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/notifications/{{id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "notifications",
+                "{{id}}"
+              ]
+            },
+            "description": "Debe verse delivered, historial e intentos."
+          }
+        },
+        {
+          "name": "1c. Bandeja del destinatario",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/inbox/ana@example.test",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "inbox",
+                "ana@example.test"
+              ]
+            },
+            "description": ""
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Idempotencia",
+      "item": [
+        {
+          "name": "2a. Repetir igual (200, mismo id)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/notifications",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "notifications"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recipient\": \"ana@example.test\",\n  \"channel\": \"internal\",\n  \"subject\": \"Hola\",\n  \"body\": \"Demo en vivo\",\n  \"idempotency_key\": \"demo-1\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j.id) pm.collectionVariables.set('id', j.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2b. Misma clave, otro contenido (409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/notifications",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "notifications"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recipient\": \"ana@example.test\",\n  \"channel\": \"internal\",\n  \"subject\": \"Otro asunto\",\n  \"body\": \"Demo en vivo\",\n  \"idempotency_key\": \"demo-1\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Correo degradado (la falla se activa en la terminal)",
+      "item": [
+        {
+          "name": "4a. Enviar correo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/notifications",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "notifications"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recipient\": \"ana@example.test\",\n  \"channel\": \"email\",\n  \"subject\": \"Correo con proveedor caido\",\n  \"body\": \"Demo en vivo\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j.id) pm.collectionVariables.set('id_correo', j.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "4b. Enviar interno",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/notifications",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "notifications"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recipient\": \"ana@example.test\",\n  \"channel\": \"internal\",\n  \"subject\": \"Interno con correo caido\",\n  \"body\": \"Demo en vivo\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j.id) pm.collectionVariables.set('id_interno', j.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "4c. Estado del correo (failed, 3 intentos)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/notifications/{{id_correo}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "notifications",
+                "{{id_correo}}"
+              ]
+            },
+            "description": "Esperar ~20 s tras enviar."
+          }
+        },
+        {
+          "name": "4d. Estado del interno (delivered)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/notifications/{{id_interno}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "notifications",
+                "{{id_interno}}"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "4e. Reprocesar el correo (admin, 202)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{admin_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/notifications/{{id_correo}}/reprocess",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "notifications",
+                "{{id_correo}}",
+                "reprocess"
+              ]
+            },
+            "description": "Con la falla ya quitada. Solo failed y solo admin."
+          }
+        },
+        {
+          "name": "4f. Estado del correo tras reprocesar (delivered)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/notifications/{{id_correo}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "notifications",
+                "{{id_correo}}"
+              ]
+            },
+            "description": ""
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Worker caído (se detiene en la terminal)",
+      "item": [
+        {
+          "name": "5a. Enviar con worker caido",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/notifications",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "notifications"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recipient\": \"ana@example.test\",\n  \"channel\": \"internal\",\n  \"subject\": \"Con worker caido\",\n  \"body\": \"Demo en vivo\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j.id) pm.collectionVariables.set('id_pendiente', j.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "5b. Estado (pending)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/notifications/{{id_pendiente}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "notifications",
+                "{{id_pendiente}}"
+              ]
+            },
+            "description": "Antes de encender el worker: pending. Después: delivered."
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Acceso rechazado",
+      "item": [
+        {
+          "name": "7a. Sin clave (401)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/v1/stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "stats"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "7b. Clave inválida (401)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "ntf_invalida"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "stats"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "7c. Cliente sin rol admin (403)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "stats"
+              ]
+            },
+            "description": ""
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Persistencia",
+      "item": [
+        {
+          "name": "8. Recuentos (admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{admin_key}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/v1/stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "stats"
+              ]
+            },
+            "description": "Antes y después de borrar el Pod de PostgreSQL."
+          }
+        }
+      ]
+    }
+  ]
+}
