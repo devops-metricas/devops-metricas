@@ -1,6 +1,6 @@
 # ESC1: Requisitos del Escenario 1 (Notificaciones multicanal)
 
-> **Parcial. Completa Melissa.** Implementado, probado en local y en `dev` en el clúster. Falta P1-5 (Camila y Rene).
+> **Cubierto.** Implementado, probado en local y en `dev` en el clúster. P1-5 se demostró con el incidente controlado de MET-07 (trazas, logs y alerta).
 
 | Requisito | Dónde se cumple | Prueba |
 |---|---|---|
@@ -23,11 +23,12 @@
 | P1-2 Dependencia degradada | `smoke.py email-degraded` (worker con `NOTIFIER_EMAIL_FAULT_RATE>0`) | Pasa en local y en el clúster |
 | P1-3 Idempotencia secuencial y concurrente | `smoke.py idempotency` | Pasa en local y en el clúster |
 | P1-4 Recuperación al reiniciar el worker | `smoke.py recovery` | Pasa en local y en el clúster |
-| P1-5 Correlación de extremo a extremo y alerta | Trazas y alerta (métricas) | **Pendiente por Camila y Rene** (MET-04 y MET-06) |
+| P1-5 Correlación de extremo a extremo y alerta | Trazas y alerta (métricas) | Pasa en `dev`: una notificación se sigue de punta a punta por log y traza, y la alerta se dispara y se resuelve ([MET-07](../MET/MET-07-incidente-controlado.md), [MET-04](../MET/MET-04-trazas-opentelemetry.md), [MET-06](../MET/MET-06-alertas.md)) |
 
 ## Qué falta
 
-P1-5 (correlación de extremo a extremo y alerta), que depende de MET-04 y MET-06.
+Nada de este documento. Las pruebas P1-1 a P1-4 están en la evidencia siguiente; P1-5 se respalda en
+MET-07 (notificación `02e7bade…`, traza `863f3fdb…` y línea de tiempo) y en MET-06 (alerta en K3s).
 
 ## Evidencia
 
