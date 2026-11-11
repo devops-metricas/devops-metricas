@@ -122,7 +122,33 @@ No se afirma como hecho.
 
 **Limitaciones.** Todo el tráfico fue por el canal `internal`; el correo no se probó en la VM. La carga
 salió de un solo PC por internet. No se encontró el punto de saturación. La latencia del cliente incluye
-la red. El consumo de los pods del namespace `monitoring` no se midió en esta sesión.
+la red. El consumo del namespace `monitoring` está en la subsección siguiente; no forma parte de esa carga.
+
+### Consumo del monitoreo (namespace `monitoring`)
+
+Valores aproximados leídos de las gráficas, de 18:31 a 19:01, hora local de El Salvador (UTC−6). El eje
+de CPU está en cores; aquí se pasa a milicores.
+
+```
+sum by (container) (container_memory_working_set_bytes{namespace="monitoring", container!=""}) / 1024 / 1024
+```
+
+```
+sum by (container) (rate(container_cpu_usage_seconds_total{namespace="monitoring", container!=""}[2m]))
+```
+
+| Componente | Memoria real | Request / límite de memoria | CPU real | Request de CPU |
+|---|---|---|---|---|
+| Prometheus | ~150 MiB (pico ~170 MiB) | 256Mi / 512Mi | ~2 a 4 milicores | 100m |
+| Grafana | ~145 a 155 MiB | 128Mi / 256Mi | ~4 a 8 milicores | 50m |
+
+El namespace usa en total unos 300 MiB y unos 10 milicores: alrededor del 4 % de la memoria y del 0,5 %
+de la CPU de la VM (2 vCPU, 8 GiB). La memoria de Grafana queda algo por encima de su request (128Mi) y
+lejos del límite; un request de 192Mi a 256Mi sería más realista.
+
+![Memoria de Prometheus y Grafana](../evidencias/MET-03-infra-monitoreo-memoria.png)
+
+![CPU de Prometheus y Grafana](../evidencias/MET-03-infra-monitoreo-cpu.png)
 
 ## Interpretación
 

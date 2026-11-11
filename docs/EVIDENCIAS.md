@@ -3,7 +3,7 @@
 Un documento por requisito, con su ID al inicio del nombre. Las capturas están en
 [evidencias/](evidencias). Este índice se actualiza al cerrar cada requisito.
 
-**Resumen:** 25 cubiertos, 3 parciales, 0 pendientes.
+**Resumen:** 26 cubiertos, 2 parciales, 0 pendientes.
 
 | Requisito | Documento | Responsable | Estado |
 |---|---|---|---|
@@ -32,7 +32,7 @@ Un documento por requisito, con su ID al inicio del nombre. Las capturas están 
 | MET-03 | [MET-03-metricas-de-aplicacion.md](MET/MET-03-metricas-de-aplicacion.md) | Rene | Cubierto |
 | MET-04 | [MET-04-trazas-opentelemetry.md](MET/MET-04-trazas-opentelemetry.md) | Camila | Cubierto |
 | MET-05 | [MET-05-dashboards.md](MET/MET-05-dashboards.md) | Rene | Cubierto |
-| MET-06 | [MET-06-alertas.md](MET/MET-06-alertas.md) | Rene | Parcial |
+| MET-06 | [MET-06-alertas.md](MET/MET-06-alertas.md) | Rene | Cubierto |
 | MET-07 | [MET-07-incidente-controlado.md](MET/MET-07-incidente-controlado.md) | Camila | Cubierto |
 | ESC1 | [ESC1-requisitos.md](ESC1/ESC1-requisitos.md) | Melissa | Parcial |
 
